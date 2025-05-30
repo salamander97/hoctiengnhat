@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Học tiếng Nhật cùng Sakura 🌸</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+    <!-- Header với hiệu ứng hoa anh đào -->
+    <div class="hero-section">
+        <div class="sakura-container">
+            <div class="sakura"></div>
+            <div class="sakura"></div>
+            <div class="sakura"></div>
+            <div class="sakura"></div>
+            <div class="sakura"></div>
+        </div>
+        
+        <div class="container text-center">
+            <div class="hero-content">
+                <h1 class="hero-title">🌸 学習の庭 🌸</h1>
+                <h2 class="hero-subtitle">Vườn học tiếng Nhật</h2>
+                <p class="hero-description">Cùng nhau khám phá thế giới Hiragana, Katakana và con số một cách vui vẻ!</p>
+                
+                <!-- User info or login prompt -->
+                <div id="userInfo" class="user-section">
+                    <div id="welcomeUser" class="welcome-message d-none">
+                        <h4>こんにちは、<span id="username"></span>さん！</h4>
+                        <p>Hôm nay chúng ta học gì nhỉ? 📚</p>
+                    </div>
+                    <div id="loginPrompt" class="login-prompt">
+                        <p>Vui lòng đăng nhập để bắt đầu hành trình học tập! ✨</p>
+                        <button class="btn btn-login" onclick="showLogin()">🔑 Đăng nhập</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="container my-5">
+        <div class="row" id="menuItems">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card" data-page="hiragana-rules">
+                    <div class="menu-icon">🌸</div>
+                    <h3>Quy tắc Hiragana</h3>
+                    <p>Học cách ghép âm Yoon một cách dễ hiểu</p>
+                    <div class="menu-arrow">→</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card" data-page="hiragana-test">
+                    <div class="menu-icon">✏️</div>
+                    <h3>Kiểm tra Hiragana</h3>
+                    <p>Thử thách kiến thức Hiragana của bạn</p>
+                    <div class="progress-badge">
+                        <span id="hiragana-progress">0%</span>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card" data-page="katakana-test">
+                    <div class="menu-icon">🎌</div>
+                    <h3>Kiểm tra Katakana</h3>
+                    <p>Thử sức với bảng chữ cái Katakana</p>
+                    <div class="progress-badge">
+                        <span id="katakana-progress">0%</span>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card" data-page="number-test">
+                    <div class="menu-icon">🔢</div>
+                    <h3>Kiểm tra Số đếm</h3>
+                    <p>Học cách đếm số trong tiếng Nhật</p>
+                    <div class="progress-badge">
+                        <span id="number-progress">0%</span>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+            </div>
+
+            <!-- Các mục sẽ mở trong tương lai -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card coming-soon">
+                    <div class="menu-icon">📚</div>
+                    <h3>Từ vựng N5</h3>
+                    <p>Học từ vựng cơ bản JLPT N5</p>
+                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card coming-soon">
+                    <div class="menu-icon">📖</div>
+                    <h3>Từ vựng N4</h3>
+                    <p>Nâng cao với từ vựng JLPT N4</p>
+                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card coming-soon">
+                    <div class="menu-icon">📕</div>
+                    <h3>Từ vựng N3</h3>
+                    <p>Thử thách với từ vựng JLPT N3</p>
+                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card coming-soon">
+                    <div class="menu-icon">📈</div>
+                    <h3>Thống kê học tập</h3>
+                    <p>Xem tiến độ và thành tích của bạn</p>
+                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content login-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">🔑 Đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-login w-100">Đăng nhập</button>
+                        </div>
+                        <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4">
+        <div class="container">
+            <p class="mb-0">🌸 Chúc bạn học tiếng Nhật vui vẻ! がんばって！🌸</p>
+            <p class="small text-muted">Made with ❤️ for Japanese learners</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Initialize homepage
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            initializeMenuCards();
+            createSakuraAnimation();
+        });
+
+        function initializeMenuCards() {
+            const menuCards = document.querySelectorAll('.menu-card:not(.coming-soon)');
+            
+            menuCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    if (isLoggedIn()) {
+                        navigateToPage(page);
+                    } else {
+                        showLogin();
+                    }
+                });
+
+                // Hover effects
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        function navigateToPage(page) {
+            // Add loading animation
+            document.body.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                window.location.href = page + '.html';
+            }, 300);
+        }
+
+        function createSakuraAnimation() {
+            const sakuras = document.querySelectorAll('.sakura');
+            sakuras.forEach((sakura, index) => {
+                sakura.style.animationDelay = `${index * 2}s`;
+                sakura.style.left = `${Math.random() * 100}%`;
+            });
+        }
+
+        function showLogin() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+
+        // Load user progress
+        function loadUserProgress() {
+            if (isLoggedIn()) {
+                // Call PHP API to get user progress
+                fetch('php/user-progress.php?action=get')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateProgressBadges(data.progress);
+                        }
+                    })
+                    .catch(error => console.error('Error loading progress:', error));
+            }
+        }
+
+        function updateProgressBadges(progress) {
+            document.getElementById('hiragana-progress').textContent = progress.hiragana + '%';
+            document.getElementById('katakana-progress').textContent = progress.katakana + '%';
+            document.getElementById('number-progress').textContent = progress.numbers + '%';
+        }
+    </script>
+</body>
+</html>

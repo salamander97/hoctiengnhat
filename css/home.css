@@ -1,0 +1,437 @@
+/* css/home.css - CSS riêng cho trang chủ */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 40%, #a8e6cf 100%);
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.1) 5deg, transparent 10deg);
+    animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+    100% { transform: rotate(360deg); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    animation: fadeIn 1s ease-out;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.hero-subtitle {
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-description {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Sakura Animation */
+.sakura-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.sakura {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23ffb3ba" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>') no-repeat center;
+    background-size: contain;
+    animation: sakuraFall 8s linear infinite;
+    opacity: 0.8;
+}
+
+.sakura::before {
+    content: '🌸';
+    font-size: 20px;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+}
+
+@keyframes sakuraFall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* User Section */
+.user-section {
+    margin-top: 30px;
+}
+
+.welcome-message {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.welcome-message h4 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.login-prompt {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Menu Cards */
+.menu-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    transition: left 0.5s ease;
+}
+
+.menu-card:hover::before {
+    left: 0;
+}
+
+.menu-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.menu-card:active {
+    transform: translateY(-5px) scale(0.98);
+}
+
+.menu-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+.menu-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.menu-card p {
+    color: #6c757d;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.menu-arrow {
+    font-size: 1.5rem;
+    color: #667eea;
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
+}
+
+.menu-card:hover .menu-arrow {
+    transform: translateX(10px);
+}
+
+/* Progress Badge */
+.progress-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 3;
+    box-shadow: 0 2px 8px rgba(86, 171, 47, 0.3);
+}
+
+/* Coming Soon Cards */
+.menu-card.coming-soon {
+    background: rgba(200, 200, 200, 0.3);
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+
+.menu-card.coming-soon:hover {
+    transform: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.menu-card.coming-soon::before {
+    display: none;
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 3;
+    box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+}
+
+.menu-card.coming-soon .menu-icon,
+.menu-card.coming-soon h3,
+.menu-card.coming-soon p {
+    opacity: 0.6;
+}
+
+/* Login Modal Styles */
+.login-modal {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.login-modal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 25px 30px;
+}
+
+.login-modal .modal-header h5 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.login-modal .modal-body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 40px 30px;
+}
+
+.login-modal .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.login-modal .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: scale(1.02);
+}
+
+.login-modal .btn-login {
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.8rem;
+    }
+    
+    .menu-card {
+        height: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 60vh;
+        padding: 20px 0;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.4rem;
+    }
+    
+    .hero-description {
+        font-size: 1.1rem;
+    }
+    
+    .menu-card {
+        height: 220px;
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .menu-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
+    
+    .menu-card h3 {
+        font-size: 1.2rem;
+    }
+    
+    .menu-card p {
+        font-size: 0.9rem;
+    }
+    
+    .welcome-message,
+    .login-prompt {
+        padding: 20px;
+    }
+    
+    .btn-login {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .menu-card {
+        height: 200px;
+        padding: 15px;
+    }
+    
+    .menu-icon {
+        font-size: 2.5rem;
+    }
+    
+    .progress-badge,
+    .coming-soon-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+}
+
+/* Special animations for Japanese learning theme */
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+.menu-card:hover .menu-icon {
+    animation: wiggle 0.5s ease-in-out;
+}
+
+/* Dark mode support (if needed later) */
+@media (prefers-color-scheme: dark) {
+    .menu-card {
+        background: rgba(40, 40, 40, 0.95);
+        color: #f8f9fa;
+    }
+    
+    .menu-card h3 {
+        color: #f8f9fa;
+    }
+    
+    .menu-card p {
+        color: #adb5bd;
+    }
+}

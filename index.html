@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Học tiếng Nhật cùng Sakura 🌸</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Inline CSS để tránh lỗi file external */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans JP', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 40%, #a8e6cf 100%);
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.1) 5deg, transparent 10deg);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .hero-subtitle {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .user-section {
+            margin-top: 30px;
+        }
+
+        .welcome-message {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-prompt {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+            position: relative;
+            z-index: 2;
+        }
+
+        .menu-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .menu-card p {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .menu-arrow {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-card:hover .menu-arrow {
+            transform: translateX(10px);
+        }
+
+        .progress-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(86, 171, 47, 0.3);
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+        }
+
+        .menu-card.coming-soon {
+            background: rgba(200, 200, 200, 0.3);
+            cursor: not-allowed;
+            filter: grayscale(50%);
+        }
+
+        .menu-card.coming-soon:hover {
+            transform: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-card.coming-soon .menu-icon,
+        .menu-card.coming-soon h3,
+        .menu-card.coming-soon p {
+            opacity: 0.6;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .menu-card {
+                height: 220px;
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .menu-icon {
+                font-size: 3rem;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header với hiệu ứng hoa anh đào -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <div class="hero-content">
+                <h1 class="hero-title">🌸 学習の庭 🌸</h1>
+                <h2 class="hero-subtitle">Vườn học tiếng Nhật</h2>
+                <p class="hero-description">Cùng nhau khám phá thế giới Hiragana, Katakana và con số một cách vui vẻ!</p>
+                
+                <!-- User info or login prompt -->
+                <div id="userInfo" class="user-section">
+                    <div id="welcomeUser" class="welcome-message d-none">
+                        <h4>こんにちは、<span id="username"></span>さん！</h4>
+                        <p>Hôm nay chúng ta học gì nhỉ? 📚</p>
+                    </div>
+                    <div id="loginPrompt" class="login-prompt">
+                        <p>Vui lòng đăng nhập để bắt đầu hành trình học tập! ✨</p>
+                        <button class="btn btn-login" onclick="showLogin()">🔑 Đăng nhập</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="container my-5">
+        <div class="row" id="menuItems">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card" data-page="hiragana-rules">
+                    <div class="menu-icon">🌸</div>
+                    <h3>Quy tắc Hiragana</h3>
+                    <p>Học cách ghép âm Yoon một cách dễ hiểu</p>
+                    <div class="menu-arrow">→</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card" data-page="hiragana-test">
+                    <div class="menu-icon">✏️</div>
+                    <h3>Kiểm tra Hiragana</h3>
+                    <p>Thử thách kiến thức Hiragana của bạn</p>
+                    <div class="progress-badge">
+                        <span id="hiragana-progress">0%</span>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card coming-soon">
+                    <div class="menu-icon">🎌</div>
+                    <h3>Kiểm tra Katakana</h3>
+                    <p>Thử sức với bảng chữ cái Katakana</p>
+                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="menu-card coming-soon">
+                    <div class="menu-icon">🔢</div>
+                    <h3>Kiểm tra Số đếm</h3>
+                    <p>Học cách đếm số trong tiếng Nhật</p>
+                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title">🔑 Đăng nhập</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding: 30px;">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-login w-100">Đăng nhập</button>
+                        </div>
+                        <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+                    </form>
+                    
+                    <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
+                        <h6>🧪 Tài khoản test:</h6>
+                        <p class="mb-1"><strong>Username:</strong> demo</p>
+                        <p class="mb-0"><strong>Password:</strong> password</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4">
+        <div class="container">
+            <p class="mb-0">🌸 Chúc bạn học tiếng Nhật vui vẻ! がんばって！🌸</p>
+            <p class="small text-muted">Made with ❤️ for Japanese learners</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Simple inline JavaScript to avoid external file errors
+        let currentUser = null;
+        
+        // Show login modal
+        function showLogin() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+        
+        // Handle login form
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            // Show loading
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+            submitBtn.disabled = true;
+            errorDiv.classList.add('d-none');
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'login');
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch('php/auth.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = data.user;
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    modal.hide();
+                    
+                    // Update UI
+                    updateUI(true);
+                    
+                    // Show success message
+                    showToast('Đăng nhập thành công! 🎉', 'success');
+                    
+                    // Reset form
+                    e.target.reset();
+                } else {
+                    showError(errorDiv, data.message || 'Tên đăng nhập hoặc mật khẩu không đúng!');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(errorDiv, 'Có lỗi xảy ra, vui lòng thử lại!');
+            } finally {
+                submitBtn.innerHTML = '🔑 Đăng nhập';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Update UI based on login status
+        function updateUI(isLoggedIn) {
+            const welcomeUser = document.getElementById('welcomeUser');
+            const loginPrompt = document.getElementById('loginPrompt');
+            const username = document.getElementById('username');
+            
+            if (isLoggedIn && currentUser) {
+                welcomeUser.classList.remove('d-none');
+                loginPrompt.classList.add('d-none');
+                if (username) {
+                    username.textContent = currentUser.display_name || currentUser.username;
+                }
+                
+                // Enable menu items
+                const menuItems = document.querySelectorAll('.menu-card:not(.coming-soon)');
+                menuItems.forEach(item => {
+                    item.style.filter = 'none';
+                    item.style.pointerEvents = 'auto';
+                });
+            } else {
+                welcomeUser.classList.add('d-none');
+                loginPrompt.classList.remove('d-none');
+                
+                // Disable menu items
+                const menuItems = document.querySelectorAll('.menu-card:not(.coming-soon)');
+                menuItems.forEach(item => {
+                    item.style.filter = 'grayscale(50%) opacity(0.7)';
+                    item.style.pointerEvents = 'none';
+                });
+            }
+        }
+        
+        // Show error message
+        function showError(element, message) {
+            if (element) {
+                element.textContent = message;
+                element.classList.remove('d-none');
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            // Create simple alert instead of complex toast
+            const alertClass = type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info';
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${alertClass} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = message;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+        
+        // Initialize menu cards
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initially disable menu items
+            updateUI(false);
+            
+            // Add click handlers to menu cards
+            const menuCards = document.querySelectorAll('.menu-card:not(.coming-soon)');
+            menuCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    if (currentUser) {
+                        const page = this.getAttribute('data-page');
+                        if (page) {
+                            window.location.href = page + '.html';
+                        }
+                    } else {
+                        showLogin();
+                    }
+                });
+            });
+            
+            // Check if user is already logged in
+            checkLoginStatus();
+        });
+        
+        // Check login status on page load
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('php/auth.php?action=check');
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    currentUser = data.user;
+                    updateUI(true);
+                }
+            } catch (error) {
+                console.log('No active session');
+                updateUI(false);
+            }
+        }
+    </script>
+</body>
+</html>

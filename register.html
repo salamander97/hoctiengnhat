@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Đăng ký tài khoản - Học tiếng Nhật</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .register-header {
+            background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        .register-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.1) 5deg, transparent 10deg);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        .register-header h1 {
+            position: relative;
+            z-index: 2;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .register-header p {
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
+            margin: 0;
+        }
+        .register-body {
+            padding: 40px 30px;
+        }
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            transform: scale(1.02);
+        }
+        .btn-register {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.3);
+        }
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(86, 171, 47, 0.5);
+            color: white;
+        }
+        .btn-login-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn-login-link:hover {
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+        .password-strength {
+            height: 5px;
+            border-radius: 3px;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+        .strength-weak { background: #dc3545; width: 33%; }
+        .strength-medium { background: #ffc107; width: 66%; }
+        .strength-strong { background: #28a745; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <div class="register-header">
+                <h1>📝 Đăng ký</h1>
+                <p>Tạo tài khoản để bắt đầu học tiếng Nhật!</p>
+            </div>
+            
+            <div class="register-body">
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Tên đăng nhập *</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                        <div class="form-text">Ít nhất 3 ký tự, chỉ chứa chữ, số và dấu gạch dưới</div>
+                        <div id="usernameError" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div id="emailError" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="display_name" class="form-label">Tên hiển thị</label>
+                        <input type="text" class="form-control" id="display_name" name="display_name">
+                        <div class="form-text">Tên sẽ hiển thị trên website (không bắt buộc)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mật khẩu *</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="password-strength" id="passwordStrength"></div>
+                        <div class="form-text">Ít nhất 6 ký tự, nên có chữ hoa, chữ thường và số</div>
+                        <div id="passwordError" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Xác nhận mật khẩu *</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <div id="confirmPasswordError" class="text-danger small"></div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                Tôi đồng ý với <a href="#" class="text-decoration-none">điều khoản sử dụng</a>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-register">
+                            🌸 Tạo tài khoản
+                        </button>
+                    </div>
+                    
+                    <div id="registerError" class="alert alert-danger d-none"></div>
+                    <div id="registerSuccess" class="alert alert-success d-none"></div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">Đã có tài khoản?</p>
+                    <a href="index.html" class="btn-login-link">🔑 Đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validate username
+        document.getElementById('username').addEventListener('input', function() {
+            const username = this.value;
+            const errorDiv = document.getElementById('usernameError');
+            
+            if (username.length < 3) {
+                errorDiv.textContent = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+            } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                errorDiv.textContent = 'Chỉ được chứa chữ, số và dấu gạch dưới';
+            } else {
+                errorDiv.textContent = '';
+                // Check if username exists (call API)
+                checkUsernameExists(username);
+            }
+        });
+        
+        // Check password strength
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            const errorDiv = document.getElementById('passwordError');
+            
+            if (password.length < 6) {
+                strengthDiv.className = 'password-strength';
+                errorDiv.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+            } else {
+                errorDiv.textContent = '';
+                
+                let strength = 0;
+                if (password.length >= 8) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^a-zA-Z0-9]/.test(password)) strength++;
+                
+                if (strength <= 2) {
+                    strengthDiv.className = 'password-strength strength-weak';
+                } else if (strength <= 3) {
+                    strengthDiv.className = 'password-strength strength-medium';
+                } else {
+                    strengthDiv.className = 'password-strength strength-strong';
+                }
+            }
+        });
+        
+        // Confirm password
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const errorDiv = document.getElementById('confirmPasswordError');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                errorDiv.textContent = 'Mật khẩu xác nhận không khớp';
+            } else {
+                errorDiv.textContent = '';
+            }
+        });
+        
+        // Auto-fill display name
+        document.getElementById('username').addEventListener('blur', function() {
+            const displayName = document.getElementById('display_name');
+            if (!displayName.value) {
+                displayName.value = this.value;
+            }
+        });
+        
+        // Handle form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Show loading
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang tạo tài khoản...';
+            submitBtn.disabled = true;
+            errorDiv.classList.add('d-none');
+            successDiv.classList.add('d-none');
+            
+            try {
+                formData.append('action', 'register');
+                
+                const response = await fetch('php/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successDiv.innerHTML = `
+                        <h5>🎉 Đăng ký thành công!</h5>
+                        <p><strong>Tên đăng nhập:</strong> ${data.username}<br>
+                        <strong>Email:</strong> ${data.email}</p>
+                        <p>Bạn có thể đăng nhập ngay bây giờ!</p>
+                    `;
+                    successDiv.classList.remove('d-none');
+                    
+                    // Reset form
+                    this.reset();
+                    document.getElementById('passwordStrength').className = 'password-strength';
+                    
+                    // Redirect after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                } else {
+                    errorDiv.innerHTML = data.message || 'Có lỗi xảy ra, vui lòng thử lại!';
+                    errorDiv.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                errorDiv.innerHTML = 'Có lỗi kết nối, vui lòng thử lại!';
+                errorDiv.classList.remove('d-none');
+            } finally {
+                submitBtn.innerHTML = '🌸 Tạo tài khoản';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function validateForm() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            if (username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+                showError('Tên đăng nhập không hợp lệ');
+                return false;
+            }
+            
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Email không hợp lệ');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showError('Mật khẩu phải có ít nhất 6 ký tự');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('Mật khẩu xác nhận không khớp');
+                return false;
+            }
+            
+            if (!agreeTerms) {
+                showError('Vui lòng đồng ý với điều khoản sử dụng');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('registerError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('d-none');
+        }
+        
+        async function checkUsernameExists(username) {
+            if (username.length < 3) return;
+            
+            try {
+                const response = await fetch(`php/check-username.php?username=${encodeURIComponent(username)}`);
+                const data = await response.json();
+                
+                const errorDiv = document.getElementById('usernameError');
+                if (data.exists) {
+                    errorDiv.textContent = 'Tên đăng nhập đã tồn tại';
+                } else if (errorDiv.textContent === 'Tên đăng nhập đã tồn tại') {
+                    errorDiv.textContent = '';
+                }
+            } catch (error) {
+                console.error('Check username error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
