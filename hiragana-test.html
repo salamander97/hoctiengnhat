@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Hiragana & Số Đếm Vui Vẻ!</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans JP', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff9a8b, #ffecd2);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.1) 5deg, transparent 10deg);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #fefefe 0%, #f1f1f1 100%);
+            border-left: 5px solid #ff9a8b;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h2::before {
+            content: '✨';
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .mode-select, .range-select, .quiz {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .mode-btn, .range-btn, .option-btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 5px 15px rgba(107, 114, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover, .range-btn:hover, .option-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+        }
+
+        .option-btn {
+            width: 100%;
+            max-width: 350px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #2c3e50;
+            font-weight: bold;
+            padding: 20px 30px;
+            margin: 10px 0;
+        }
+
+        .option-btn:hover {
+            background: linear-gradient(135deg, #c7d2fe 0%, #e0e7ff 100%);
+            color: #1e40af;
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+            color: white !important;
+            animation: bounce 0.3s;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+            color: white !important;
+            animation: shake 0.3s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .score-box {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(255, 154, 139, 0.3);
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 5px 15px rgba(250, 204, 21, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #eab308 0%, #facc15 100%);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        #question {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #feedback {
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-correct {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724 !important;
+        }
+
+        .feedback-wrong {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24 !important;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .mode-btn, .range-btn, .option-btn, .restart-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+
+            .option-btn {
+                max-width: 300px;
+                padding: 15px 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            #options {
+                gap: 12px;
+            }
+
+            #question {
+                font-size: 3rem;
+            }
+
+            .back-button {
+                position: static;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-button">← Về trang chủ</a>
+            <h1>✨ Học Hiragana & Số Đếm Vui Vẻ! ✨</h1>
+            <p>Khám phá bảng chữ cái Hiragana và số đếm tiếng Nhật một cách thú vị!</p>
+        </div>
+
+        <div class="content">
+            <div class="score-box">
+                <p>Điểm: <span id="score">0</span></p>
+                <p>Điểm cao nhất: <span id="highScore">0</span></p>
+            </div>
+
+            <div id="modeSelect" class="section mode-select">
+                <h2>Chọn chế độ học</h2>
+                <button id="hiraganaMode" class="mode-btn">Học Hiragana</button>
+                <button id="numberMode" class="mode-btn">Học số đếm</button>
+            </div>
+
+            <div id="rangeSelect" class="section range-select hidden">
+                <h2>Chọn phạm vi số</h2>
+                <button class="range-btn" data-range="1-9">1–9</button>
+                <button class="range-btn" data-range="10-99">10–99</button>
+                <button class="range-btn" data-range="100-999">100–999</button>
+                <button class="range-btn" data-range="1000-9999">1000–9999</button>
+                <button class="range-btn" data-range="10000-99999">10000–99999</button>
+            </div>
+
+            <div id="quiz" class="section quiz hidden">
+                <h2>Câu hỏi</h2>
+                <h3 id="question"></h3>
+                <div id="options">
+                    <!-- Options will be inserted here -->
+                </div>
+                <p id="feedback"></p>
+            </div>
+
+            <button id="restart" class="restart-btn">Bắt đầu lại</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const hiraganaData = {
+            // Ký tự đơn
+            'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
+            'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
+            'さ': 'sa', 'し': 'shi', 'す': 'su', 'せ': 'se', 'そ': 'so',
+            'た': 'ta', 'ち': 'chi', 'つ': 'tsu', 'て': 'te', 'と': 'to',
+            'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
+            'は': 'ha', 'ひ': 'hi', 'ふ': 'fu', 'へ': 'he', 'ほ': 'ho',
+            'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
+            'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
+            'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
+            'わ': 'wa', 'を': 'wo', 'ん': 'n',
+            // Tổ hợp ghép (yoon)
+            'きゃ': 'kya', 'きゅ': 'kyu', 'きょ': 'kyo',
+            'しゃ': 'sha', 'しゅ': 'shu', 'しょ': 'sho',
+            'ちゃ': 'cha', 'ちゅ': 'chu', 'ちょ': 'cho',
+            'にゃ': 'nya', 'にゅ': 'nyu', 'にょ': 'nyo',
+            'ひゃ': 'hya', 'ひゅ': 'hyu', 'ひょ': 'hyo',
+            'みゃ': 'mya', 'みゅ': 'myu', 'みょ': 'myo',
+            'りゃ': 'rya', 'りゅ': 'ryu', 'りょ': 'ryo',
+            // Dakuten
+            'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
+            'ざ': 'za', 'じ': 'ji', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
+            'だ': 'da', 'ぢ': 'ji', 'づ': 'zu', 'で': 'de', 'ど': 'do',
+            'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
+            'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po'
+        };
+
+        const ranges = {
+            '1-9': [1, 9],
+            '10-99': [10, 99],
+            '100-999': [100, 999],
+            '1000-9999': [1000, 9999],
+            '10000-99999': [10000, 99999]
+        };
+
+        let currentMode = null;
+        let currentRange = null;
+        let score = 0;
+        let highScore = 0;
+        let usedQuestions = new Set();
+        let currentUser = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            checkLoginStatus();
+            
+            // Load high score from server or localStorage
+            loadHighScore();
+            
+            // Initialize event listeners
+            initializeEventListeners();
+            
+            console.log('🌸 Hiragana Test page loaded successfully!');
+        });
+
+        function initializeEventListeners() {
+            document.getElementById('hiraganaMode').onclick = () => {
+                currentMode = 'hiragana';
+                document.getElementById('modeSelect').classList.add('hidden');
+                document.getElementById('rangeSelect').classList.add('hidden');
+                document.getElementById('quiz').classList.remove('hidden');
+                showQuestion();
+            };
+
+            document.getElementById('numberMode').onclick = () => {
+                currentMode = 'number';
+                document.getElementById('modeSelect').classList.add('hidden');
+                document.getElementById('rangeSelect').classList.remove('hidden');
+                document.getElementById('quiz').classList.add('hidden');
+            };
+
+            document.querySelectorAll('.range-btn').forEach(btn => {
+                btn.onclick = () => {
+                    currentRange = btn.dataset.range;
+                    document.getElementById('rangeSelect').classList.add('hidden');
+                    document.getElementById('quiz').classList.remove('hidden');
+                    showQuestion();
+                };
+            });
+
+            document.getElementById('restart').onclick = () => {
+                score = 0;
+                document.getElementById('score').textContent = score;
+                document.getElementById('modeSelect').classList.remove('hidden');
+                document.getElementById('rangeSelect').classList.add('hidden');
+                document.getElementById('quiz').classList.add('hidden');
+                usedQuestions.clear();
+                clearFeedback();
+            };
+        }
+
+        function numberToJapanese(number) {
+            const units = ['', 'いち', 'に', 'さん', 'よん', 'ご', 'ろく', 'なな', 'はち', 'きゅう'];
+            const tens = ['', 'じゅう', 'にじゅう', 'さんじゅう', 'よんじゅう', 'ごじゅう', 'ろくじゅう', 'ななじゅう', 'はちじゅう', 'きゅうじゅう'];
+            const hundreds = ['', 'ひゃく', 'にひゃく', 'さんびゃく', 'よんひゃく', 'ごひゃく', 'ろっぴゃく', 'ななひゃく', 'はっぴゃく', 'きゅうひゃく'];
+            const thousands = ['', 'せん', 'にせん', 'さんぜん', 'よんせん', 'ごせん', 'ろくせん', 'ななせん', 'はっせん', 'きゅうせん'];
+            const tenThousands = ['', 'いちまん', 'にまん', 'さんまん', 'よんまん', 'ごまん', 'ろくまん', 'ななまん', 'はちまん', 'きゅうまん'];
+
+            if (number === 0) return 'ぜろ';
+            let result = '';
+
+            const tenThousand = Math.floor(number / 10000);
+            if (tenThousand > 0) {
+                result += tenThousands[tenThousand];
+                number %= 10000;
+            }
+
+            const thousand = Math.floor(number / 1000);
+            if (thousand > 0) {
+                result += (thousand === 1 ? '' : units[thousand]) + 'せん';
+                number %= 1000;
+            }
+
+            const hundred = Math.floor(number / 100);
+            if (hundred > 0) {
+                result += hundreds[hundred];
+                number %= 100;
+            }
+
+            const ten = Math.floor(number / 10);
+            if (ten > 0) {
+                result += tens[ten];
+                number %= 10;
+            }
+
+            if (number > 0) {
+                result += units[number];
+            }
+
+            return result;
+        }
+
+        function getRandomItem(obj) {
+            const keys = Object.keys(obj);
+            return keys[Math.floor(Math.random() * keys.length)];
+        }
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateOptions(correctAnswer, isHiragana) {
+            const options = [correctAnswer];
+            
+            while (options.length < 4) {
+                let randomAnswer;
+                if (isHiragana) {
+                    randomAnswer = hiraganaData[getRandomItem(hiraganaData)];
+                } else {
+                    const [min, max] = ranges[currentRange];
+                    const wrongNumber = getRandomNumber(min, max);
+                    randomAnswer = numberToJapanese(wrongNumber);
+                }
+                if (!options.includes(randomAnswer) && randomAnswer !== correctAnswer) {
+                    options.push(randomAnswer);
+                }
+            }
+            return shuffleArray(options);
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function showQuestion() {
+            let question, correctAnswer, isHiragana = currentMode === 'hiragana';
+            
+            if (isHiragana) {
+                question = getRandomItem(hiraganaData);
+                while (usedQuestions.has(question) && usedQuestions.size < Object.keys(hiraganaData).length) {
+                    question = getRandomItem(hiraganaData);
+                }
+                correctAnswer = hiraganaData[question];
+            } else {
+                const [min, max] = ranges[currentRange];
+                question = getRandomNumber(min, max).toString();
+                while (usedQuestions.has(question) && usedQuestions.size < max - min + 1) {
+                    question = getRandomNumber(min, max).toString();
+                }
+                correctAnswer = numberToJapanese(parseInt(question));
+            }
+
+            if (usedQuestions.size >= (isHiragana ? Object.keys(hiraganaData).length : ranges[currentRange][1] - ranges[currentRange][0] + 1)) {
+                usedQuestions.clear();
+            }
+            usedQuestions.add(question);
+
+            document.getElementById('question').textContent = question;
+            const options = generateOptions(correctAnswer, isHiragana);
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, correctAnswer);
+                optionsDiv.appendChild(btn);
+            });
+
+            // Clear previous feedback
+            clearFeedback();
+
+            // Animation for question and options
+            animateQuestion();
+        }
+
+        function checkAnswer(selected, correct) {
+            const feedback = document.getElementById('feedback');
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) {
+                    btn.classList.add('correct');
+                }
+                if (btn.textContent === selected && selected !== correct) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (selected === correct) {
+                score += 10;
+                feedback.textContent = 'Đúng rồi! 🎉';
+                feedback.className = 'feedback-correct';
+                document.getElementById('score').textContent = score;
+                
+                // Update high score
+                if (score > highScore) {
+                    highScore = score;
+                    document.getElementById('highScore').textContent = highScore;
+                    saveHighScore();
+                }
+                
+                // Save progress to server
+                saveProgressToServer();
+            } else {
+                feedback.textContent = `Sai rồi! 😔 Đáp án đúng là: ${correct}`;
+                feedback.className = 'feedback-wrong';
+            }
+
+            setTimeout(() => {
+                buttons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('correct', 'wrong');
+                });
+                showQuestion();
+            }, 2000);
+        }
+
+        function clearFeedback() {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = '';
+            feedback.className = '';
+        }
+
+        function animateQuestion() {
+            const question = document.getElementById('question');
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Question animation
+            question.style.opacity = '0';
+            question.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                question.style.transition = 'all 0.5s ease';
+                question.style.opacity = '1';
+                question.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Options animation
+            optionButtons.forEach((btn, index) => {
+                btn.style.opacity = '0';
+                btn.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    btn.style.transition = 'all 0.5s ease';
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'translateY(0)';
+                }, 200 + index * 100);
+            });
+        }
+
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('php/auth.php?action=check');
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    currentUser = data.user;
+                    console.log('User logged in:', currentUser.username);
+                } else {
+                    // Redirect to login if not authenticated
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                    
+                    // Show warning
+                    showNotification('Vui lòng đăng nhập để sử dụng tính năng này!', 'warning');
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                showNotification('Lỗi kiểm tra đăng nhập. Chuyển về trang chủ...', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+            }
+        }
+
+        async function loadHighScore() {
+            if (currentUser) {
+                try {
+                    const response = await fetch('php/user-progress.php?action=get');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Calculate high score from progress data
+                        const progress = data.progress;
+                        const hiraganaScore = Math.round((progress.hiragana || 0) * 10); // Convert % to points
+                        highScore = hiraganaScore;
+                        document.getElementById('highScore').textContent = highScore;
+                    }
+                } catch (error) {
+                    console.error('Failed to load high score:', error);
+                }
+            } else {
+                // Fallback to localStorage
+                highScore = localStorage.getItem('hiragana_high_score') || 0;
+                document.getElementById('highScore').textContent = highScore;
+            }
+        }
+
+        async function saveHighScore() {
+            if (currentUser) {
+                await saveProgressToServer();
+            } else {
+                // Fallback to localStorage
+                localStorage.setItem('hiragana_high_score', highScore);
+            }
+        }
+
+        async function saveProgressToServer() {
+            if (!currentUser) return;
+            
+            try {
+                const totalQuestions = usedQuestions.size || 1;
+                const correctAnswers = Math.floor(score / 10);
+                
+                const formData = new FormData();
+                formData.append('action', 'save');
+                formData.append('type', 'hiragana');
+                formData.append('score', correctAnswers);
+                formData.append('total', totalQuestions);
+                
+                const response = await fetch('php/user-progress.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log('Progress saved successfully');
+                } else {
+                    console.error('Failed to save progress:', data.message);
+                }
+            } catch (error) {
+                console.error('Error saving progress:', error);
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info'} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.maxWidth = '400px';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to buttons
+            document.addEventListener('mouseover', function(e) {
+                if (e.target.classList.contains('mode-btn') || 
+                    e.target.classList.contains('range-btn') || 
+                    e.target.classList.contains('option-btn')) {
+                    e.target.style.transform = 'scale(1.05) translateY(-2px)';
+                }
+            });
+            
+            document.addEventListener('mouseout', function(e) {
+                if (e.target.classList.contains('mode-btn') || 
+                    e.target.classList.contains('range-btn') || 
+                    e.target.classList.contains('option-btn')) {
+                    e.target.style.transform = 'scale(1) translateY(0)';
+                }
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (!document.getElementById('quiz').classList.contains('hidden')) {
+                    const options = document.querySelectorAll('.option-btn:not([disabled])');
+                    if (e.key >= '1' && e.key <= '4') {
+                        const index = parseInt(e.key) - 1;
+                        if (options[index]) {
+                            options[index].click();
+                        }
+                    }
+                }
+                
+                // Restart with 'R' key
+                if (e.key.toLowerCase() === 'r' && e.ctrlKey) {
+                    e.preventDefault();
+                    document.getElementById('restart').click();
+                }
+            });
+            
+            // Add progress indicator
+            updateProgressIndicator();
+        });
+
+        function updateProgressIndicator() {
+            if (currentUser && usedQuestions.size > 0) {
+                const totalHiragana = Object.keys(hiraganaData).length;
+                const progress = Math.round((usedQuestions.size / totalHiragana) * 100);
+                
+                // Create or update progress bar
+                let progressBar = document.getElementById('progress-bar');
+                if (!progressBar) {
+                    progressBar = document.createElement('div');
+                    progressBar.id = 'progress-bar';
+                    progressBar.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: ${progress}%;
+                        height: 4px;
+                        background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 100%);
+                        transition: width 0.3s ease;
+                        z-index: 9999;
+                    `;
+                    document.body.appendChild(progressBar);
+                } else {
+                    progressBar.style.width = progress + '%';
+                }
+            }
+        }
+
+        // Update progress indicator after each question
+        const originalShowQuestion = showQuestion;
+        showQuestion = function() {
+            originalShowQuestion();
+            updateProgressIndicator();
+        };
+    </script>
+</body>
+</html>
