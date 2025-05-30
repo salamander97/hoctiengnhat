@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng dẫn âm ghép Hiragana - Yoon (拗音)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.1) 5deg, transparent 10deg);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid #ff6b6b;
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h2::before {
+            content: '🌸';
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .rule-box {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 8px 16px rgba(116, 185, 255, 0.3);
+        }
+
+        .rule-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .yoon-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .yoon-group {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .yoon-group:hover {
+            transform: scale(1.02);
+            border-color: #ff6b6b;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.2);
+        }
+
+        .yoon-group h4 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 10px;
+            background: linear-gradient(135deg, #ffe5e5 0%, #ffd1d1 100%);
+            border-radius: 8px;
+        }
+
+        .yoon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .yoon-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .yoon-char {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .yoon-romaji {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .yoon-vietnamese {
+            color: #27ae60;
+            font-style: italic;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 8px 16px rgba(0, 184, 148, 0.3);
+        }
+
+        .example-process {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .char-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+
+        .plus {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .equals {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .tips-section {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tip-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+
+        .navigation {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #ff6b6b;
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .yoon-table {
+                grid-template-columns: 1fr;
+            }
+
+            .example-process {
+                flex-direction: column;
+            }
+
+            .navigation {
+                display: none;
+            }
+
+            .back-button {
+                position: static;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-button">← Về trang chủ</a>
+            <h1>🌸 Hướng dẫn âm ghép Hiragana 🌸</h1>
+            <p>Học cách ghép âm Yoon (拗音) một cách dễ dàng và thú vị!</p>
+        </div>
+
+        <div class="content">
+            <div class="section" id="rules">
+                <h2>Quy tắc ghép âm cơ bản</h2>
+                <div class="rule-box">
+                    <h3>🎯 Khi nào sử dụng âm ghép?</h3>
+                    <p><strong>Âm ghép (Yoon)</strong> được tạo khi kết hợp:</p>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li>Các ký tự kết thúc bằng âm "i" (い段): き, し, ち, に, ひ, み, り, ぎ, じ, び, ぴ</li>
+                        <li>Với các ký tự nhỏ: <strong>ゃ (ya), ゅ (yu), ょ (yo)</strong></li>
+                    </ul>
+                    <p><strong>Lưu ý:</strong> Ký tự thứ hai được viết nhỏ hơn bình thường!</p>
+                </div>
+            </div>
+
+            <div class="section" id="example">
+                <h2>Ví dụ minh họa</h2>
+                <div class="example-box">
+                    <h3>🔍 Cách ghép ち + ゃ = ちゃ</h3>
+                    <div class="example-process">
+                        <div class="char-box">ち<br><small>(chi)</small></div>
+                        <div class="plus">+</div>
+                        <div class="char-box">ゃ<br><small>(ya nhỏ)</small></div>
+                        <div class="equals">=</div>
+                        <div class="char-box">ちゃ<br><small>(cha)</small></div>
+                    </div>
+                    <p style="text-align: center; margin-top: 20px; font-size: 1.2rem;">
+                        💡 <strong>Cách nhớ:</strong> "ちゃ" đọc như "cha" - giống âm "trà" trong tiếng Việt!
+                    </p>
+                </div>
+            </div>
+
+            <div class="section" id="table">
+                <h2>Bảng âm ghép đầy đủ</h2>
+                <div class="yoon-table">
+                    <div class="yoon-group">
+                        <h4>Nhóm K-G (か行・が行)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">きゃ</span>
+                            <span class="yoon-romaji">kya</span>
+                            <span class="yoon-vietnamese">kya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">きゅ</span>
+                            <span class="yoon-romaji">kyu</span>
+                            <span class="yoon-vietnamese">kyu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">きょ</span>
+                            <span class="yoon-romaji">kyo</span>
+                            <span class="yoon-vietnamese">kyo</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ぎゃ</span>
+                            <span class="yoon-romaji">gya</span>
+                            <span class="yoon-vietnamese">gya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ぎゅ</span>
+                            <span class="yoon-romaji">gyu</span>
+                            <span class="yoon-vietnamese">gyu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ぎょ</span>
+                            <span class="yoon-romaji">gyo</span>
+                            <span class="yoon-vietnamese">gyo</span>
+                        </div>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>Nhóm S-Z (さ行・ざ行)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">しゃ</span>
+                            <span class="yoon-romaji">sha</span>
+                            <span class="yoon-vietnamese">sa</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">しゅ</span>
+                            <span class="yoon-romaji">shu</span>
+                            <span class="yoon-vietnamese">syu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">しょ</span>
+                            <span class="yoon-romaji">sho</span>
+                            <span class="yoon-vietnamese">so</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">じゃ</span>
+                            <span class="yoon-romaji">ja</span>
+                            <span class="yoon-vietnamese">ja</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">じゅ</span>
+                            <span class="yoon-romaji">ju</span>
+                            <span class="yoon-vietnamese">ju</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">じょ</span>
+                            <span class="yoon-romaji">jo</span>
+                            <span class="yoon-vietnamese">jo</span>
+                        </div>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>Nhóm T-D (た行・だ行)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ちゃ</span>
+                            <span class="yoon-romaji">cha</span>
+                            <span class="yoon-vietnamese">tra</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ちゅ</span>
+                            <span class="yoon-romaji">chu</span>
+                            <span class="yoon-vietnamese">chu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ちょ</span>
+                            <span class="yoon-romaji">cho</span>
+                            <span class="yoon-vietnamese">cho</span>
+                        </div>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>Nhóm N (な行)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">にゃ</span>
+                            <span class="yoon-romaji">nya</span>
+                            <span class="yoon-vietnamese">nya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">にゅ</span>
+                            <span class="yoon-romaji">nyu</span>
+                            <span class="yoon-vietnamese">nyu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">にょ</span>
+                            <span class="yoon-romaji">nyo</span>
+                            <span class="yoon-vietnamese">nyo</span>
+                        </div>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>Nhóm H-B-P (は行・ば行・ぱ行)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ひゃ</span>
+                            <span class="yoon-romaji">hya</span>
+                            <span class="yoon-vietnamese">hya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ひゅ</span>
+                            <span class="yoon-romaji">hyu</span>
+                            <span class="yoon-vietnamese">hyu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ひょ</span>
+                            <span class="yoon-romaji">hyo</span>
+                            <span class="yoon-vietnamese">hyo</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">びゃ</span>
+                            <span class="yoon-romaji">bya</span>
+                            <span class="yoon-vietnamese">bya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">びゅ</span>
+                            <span class="yoon-romaji">byu</span>
+                            <span class="yoon-vietnamese">byu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">びょ</span>
+                            <span class="yoon-romaji">byo</span>
+                            <span class="yoon-vietnamese">byo</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ぴゃ</span>
+                            <span class="yoon-romaji">pya</span>
+                            <span class="yoon-vietnamese">pya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ぴゅ</span>
+                            <span class="yoon-romaji">pyu</span>
+                            <span class="yoon-vietnamese">pyu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">ぴょ</span>
+                            <span class="yoon-romaji">pyo</span>
+                            <span class="yoon-vietnamese">pyo</span>
+                        </div>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>Nhóm M-R (ま行・ら行)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">みゃ</span>
+                            <span class="yoon-romaji">mya</span>
+                            <span class="yoon-vietnamese">mya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">みゅ</span>
+                            <span class="yoon-romaji">myu</span>
+                            <span class="yoon-vietnamese">myu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">みょ</span>
+                            <span class="yoon-romaji">myo</span>
+                            <span class="yoon-vietnamese">myo</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">りゃ</span>
+                            <span class="yoon-romaji">rya</span>
+                            <span class="yoon-vietnamese">rya</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">りゅ</span>
+                            <span class="yoon-romaji">ryu</span>
+                            <span class="yoon-vietnamese">ryu</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">りょ</span>
+                            <span class="yoon-romaji">ryo</span>
+                            <span class="yoon-vietnamese">ryo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="dakuten">
+                <h2>Ghép âm với dấu phụ (Dakuten và Handakuten)</h2>
+                <div class="rule-box">
+                    <h3>🔥 Dakuten (゛) - Dấu hai chấm</h3>
+                    <p>Thêm hai chấm trên góc phải ký tự để biến âm không rung thành âm rung:</p>
+                    <div class="example-process">
+                        <div class="char-box">か<br><small>(ka)</small></div>
+                        <div class="plus">+</div>
+                        <div class="char-box">゛<br><small>(dakuten)</small></div>
+                        <div class="equals">=</div>
+                        <div class="char-box">が<br><small>(ga)</small></div>
+                    </div>
+                    <p style="margin-top: 15px;"><strong>Mẹo nhớ:</strong> Hai chấm như "thêm sức mạnh" làm âm nghe
+                        "nặng" hơn!</p>
+                </div>
+            </div>
+
+            <div class="section" id="special">
+                <h2>Các loại ghép âm đặc biệt</h2>
+
+                <div class="yoon-table">
+                    <div class="yoon-group">
+                        <h4>🎵 Âm dài (Chouon)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">かあ</span>
+                            <span class="yoon-romaji">kaa</span>
+                            <span class="yoon-vietnamese">ka-a (cá dài)</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">きい</span>
+                            <span class="yoon-romaji">kii</span>
+                            <span class="yoon-vietnamese">ki-i (kí dài)</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">すう</span>
+                            <span class="yoon-romaji">suu</span>
+                            <span class="yoon-vietnamese">su-u (số dài)</span>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                            <strong>Mẹo:</strong> Như "hát dài" nguyên âm, giống kéo dài giọng "mẹ ơi" (おかあさんーôkaasan)
+                        </p>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>⚡ Âm ngắt (Sokuon)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">かった</span>
+                            <span class="yoon-romaji">katta</span>
+                            <span class="yoon-vietnamese">kat-ta (cắt mạnh)</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">きって</span>
+                            <span class="yoon-romaji">kitte</span>
+                            <span class="yoon-vietnamese">kit-te (ngắt rõ)</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">がっこう</span>
+                            <span class="yoon-romaji">gakkou</span>
+                            <span class="yoon-vietnamese">gak-kou (trường học)</span>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                            <strong>Mẹo:</strong> っ nhỏ như "dấu chấm nghỉ", làm âm sau bật mạnh như "tắc kè"
+                        </p>
+                    </div>
+
+                    <div class="yoon-group">
+                        <h4>👃 Âm mũi (Hatsuon)</h4>
+                        <div class="yoon-item">
+                            <span class="yoon-char">けん</span>
+                            <span class="yoon-romaji">ken</span>
+                            <span class="yoon-vietnamese">ken (kèn)</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">かんと</span>
+                            <span class="yoon-romaji">kanto</span>
+                            <span class="yoon-vietnamese">kan-to (rõ ràng)</span>
+                        </div>
+                        <div class="yoon-item">
+                            <span class="yoon-char">にほん</span>
+                            <span class="yoon-romaji">nihon</span>
+                            <span class="yoon-vietnamese">ni-hon (Nhật Bản)</span>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                            <strong>Mẹo:</strong> ん như "n" trong "nắng", phát âm nhẹ ở mũi
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="tips">
+                <h2>Mẹo ghi nhớ hiệu quả</h2>
+                <div class="tips-section">
+                    <div class="tip-item">
+                        <div class="tip-icon">🍵</div>
+                        <div>
+                            <strong>Liên tưởng với từ tiếng Việt:</strong><br>
+                            • ちゃ (cha) → "trà" - nghĩ đến việc uống trà<br>
+                            • しゃ (sha) → "sa" - giống âm "sa" trong "sa mạc"<br>
+                            • じゃ (ja) → "da" - giống âm "da" trong "da cam"
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">🎨</div>
+                        <div>
+                            <strong>Tạo hình ảnh sinh động:</strong><br>
+                            • きゃ (kya) → con mèo kêu "kia kia"<br>
+                            • にゃ (nya) → tiếng mèo kêu "nya nya"<br>
+                            • みゃ (mya) → tiếng mèo con "mia mia"
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">📚</div>
+                        <div>
+                            <strong>Học theo nhóm:</strong><br>
+                            Học từng nhóm một (K-G, S-Z, T-D...) thay vì học lộn xộn.
+                            Như vậy sẽ dễ nhớ quy luật hơn!
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">✍️</div>
+                        <div>
+                            <strong>Luyện viết thường xuyên:</strong><br>
+                            Nhớ viết ゃ, ゅ, ょ nhỏ hơn bình thường.
+                            Viết tay giúp ghi nhớ tốt hơn đọc!
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">⚡</div>
+                        <div>
+                            <strong>Phân biệt các loại dấu:</strong><br>
+                            • Dakuten (゛) =→ âm nặng hơn<br>
+                            • Handakuten (゜) =→ âm "p" mạnh<br>
+                            • っ nhỏ =→ âm sau ngắt rõ<br>
+                            • ん = "âm mũi" → như "ng" nhẹ
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon">🔄</div>
+                        <div>
+                            <strong>Luyện tập theo cặp:</strong><br>
+                            • しゃ (sha - trà) ↔ じゃ (ja - mứt)<br>
+                            • ひゃ (hya - hia hia) ↔ ぴゃ (pya - piano)<br>
+                            • かあ (kaa - cá dài) ↔ かっ (ka - cắt ngắn)<br>
+                            Học theo cặp giúp phân biệt rõ ràng!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="hiragana-test.html" class="btn btn-primary btn-lg">
+                        ✏️ Làm bài kiểm tra Hiragana
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div class="nav-dot active" data-section="rules"></div>
+        <div class="nav-dot" data-section="example"></div>
+        <div class="nav-dot" data-section="table"></div>
+        <div class="nav-dot" data-section="dakuten"></div>
+        <div class="nav-dot" data-section="special"></div>
+        <div class="nav-dot" data-section="tips"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation dots functionality
+            document.querySelectorAll('.nav-dot').forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const section = e.target.getAttribute('data-section');
+                    document.getElementById(section).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Update active dot on scroll
+            window.addEventListener('scroll', () => {
+                const sections = ['rules', 'example', 'table', 'dakuten', 'special', 'tips'];
+                const scrollPos = window.scrollY + 100;
+
+                sections.forEach((section, index) => {
+                    const element = document.getElementById(section);
+                    const dot = document.querySelectorAll('.nav-dot')[index];
+
+                    if (element && dot) {
+                        if (element.offsetTop <= scrollPos &&
+                            element.offsetTop + element.offsetHeight > scrollPos) {
+                            document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active'));
+                            dot.classList.add('active');
+                        }
+                    }
+                });
+            });
+
+            // Interactive yoon items
+            document.querySelectorAll('.yoon-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    item.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        item.style.transform = 'translateX(5px)';
+                    }, 100);
+                });
+
+                // Add audio pronunciation (if you want to add later)
+                item.addEventListener('mouseenter', () => {
+                    const char = item.querySelector('.yoon-char').textContent;
+                    const romaji = item.querySelector('.yoon-romaji').textContent;
+                    item.title = `${char} - đọc là "${romaji}"`;
+                });
+            });
+
+            // Smooth animations for sections
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all sections for animation
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(section);
+            });
+
+            // Character animation on hover
+            document.querySelectorAll('.char-box').forEach(box => {
+                box.addEventListener('mouseenter', () => {
+                    box.style.transform = 'scale(1.1) rotate(2deg)';
+                });
+                
+                box.addEventListener('mouseleave', () => {
+                    box.style.transform = 'scale(1) rotate(0deg)';
+                });
+            });
+
+            console.log('🌸 Hiragana Rules page loaded successfully!');
+        });
+    </script>
+</body>
+</html>
