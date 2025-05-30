@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 Học tiếng Nhật cùng Sakura 🌸</title>
+    <title>🌸 Vợ nhớ a khônggg :333 🌸</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Inline CSS để tránh lỗi file external */
@@ -307,11 +307,14 @@
             </div>
 
             <div class="col-lg-3 col-md-6 mb-4">
-                <div class="menu-card coming-soon">
+                <div class="menu-card" data-page="number-test">
                     <div class="menu-icon">🔢</div>
                     <h3>Kiểm tra Số đếm</h3>
                     <p>Học cách đếm số trong tiếng Nhật</p>
-                    <div class="coming-soon-badge">Sắp ra mắt</div>
+                    <div class="progress-badge">
+                        <span id="number-progress">0%</span>
+                    </div>
+                    <div class="menu-arrow">→</div>
                 </div>
             </div>
         </div>
@@ -444,6 +447,9 @@
                     item.style.filter = 'none';
                     item.style.pointerEvents = 'auto';
                 });
+                
+                // Load user progress
+                loadUserProgress();
             } else {
                 welcomeUser.classList.add('d-none');
                 loginPrompt.classList.remove('d-none');
@@ -479,6 +485,30 @@
             setTimeout(() => {
                 alertDiv.remove();
             }, 3000);
+        }
+        
+        // Load user progress
+        async function loadUserProgress() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch('php/user-progress.php?action=get');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateProgressBadges(data.progress);
+                }
+            } catch (error) {
+                console.error('Error loading progress:', error);
+            }
+        }
+        
+        // Update progress badges
+        function updateProgressBadges(progress) {
+            if (progress) {
+                document.getElementById('hiragana-progress').textContent = (progress.hiragana || 0) + '%';
+                document.getElementById('number-progress').textContent = (progress.numbers || 0) + '%';
+            }
         }
         
         // Initialize menu cards
