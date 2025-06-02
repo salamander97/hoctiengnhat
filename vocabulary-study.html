@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Học từ vựng N5 - Flashcard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/vocabulary-study.css">
+</head>
+<body>
+    <!-- Debug Info -->
+    <div id="debugInfo" class="debug-info" style="display: none;">
+        <div><strong>🐛 DEBUG MODE</strong></div>
+        <div>Category ID: <span id="debugCategoryId">-</span></div>
+        <div>Current Word Index: <span id="debugIndex">0</span></div>
+        <div>Total Words: <span id="debugTotal">0</span></div>
+        <div>Card Flipped: <span id="debugFlipped">false</span></div>
+        <div>API Status: <span id="debugAPI">Waiting...</span></div>
+        <div>Data Source: <span id="debugDataSource">Unknown</span></div>
+        <button onclick="toggleDebug()" class="btn btn-sm btn-outline-light mt-2">Hide Debug</button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h4>Đang tải từ vựng...</h4>
+            <p>Vui lòng chờ trong giây lát</p>
+            <div class="mt-3">
+                <small class="text-muted">Đang kết nối đến database...</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">❌ Có lỗi xảy ra</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage">Không thể tải dữ liệu từ vựng.</p>
+                    <div class="mt-3">
+                        <strong>Các bước khắc phục:</strong>
+                        <ol class="mt-2">
+                            <li>Kiểm tra kết nối internet</li>
+                            <li>Đảm bảo đã đăng nhập</li>
+                            <li>Thử làm mới trang</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="window.location.reload()">Làm mới trang</button>
+                    <button type="button" class="btn btn-warning" onclick="useSampleData()">Dùng dữ liệu mẫu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="study-container">
+        <!-- Back Button & Controls -->
+        <div class="top-controls">
+            <a href="vocabulary-categories.html" class="back-button">← Về danh sách chủ đề</a>
+            <div class="top-actions">
+                <button onclick="toggleDebug()" class="control-btn secondary btn-sm">🐛 Debug</button>
+                <button onclick="window.location.reload()" class="control-btn secondary btn-sm">🔄 Reload</button>
+            </div>
+        </div>
+
+        <!-- Study Header -->
+        <div class="study-header">
+            <div class="session-info">
+                <div class="category-badge" id="categoryName">
+                    <span class="category-icon" id="categoryIcon">📚</span>
+                    <span id="categoryText">Đang tải...</span>
+                </div>
+                <div class="session-type-info">
+                    Phiên học: <span id="sessionType">Từ mới</span> | 
+                    <span id="dataSource">Đang xác định nguồn dữ liệu...</span>
+                </div>
+            </div>
+
+            <div class="progress-info">
+                <div class="study-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentCard">0</div>
+                        <div class="stat-label">Thẻ hiện tại</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCards">0</div>
+                        <div class="stat-label">Tổng thẻ</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="studiedToday">0</div>
+                        <div class="stat-label">Đã học hôm nay</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="reviewsDue">0</div>
+                        <div class="stat-label">Cần ôn tập</div>
+                    </div>
+                </div>
+
+                <div class="study-progress">
+                    <div class="progress">
+                        <div class="progress-bar" id="studyProgress" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted mt-1 d-block">
+                        Tiến độ phiên học: <span id="progressText">0/0</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard Container -->
+        <div class="flashcard-container">
+            <div id="flashcard" class="flashcard" tabindex="0">
+                <div class="flashcard-inner">
+                    <!-- Front Side (Japanese) -->
+                    <div class="flashcard-face flashcard-front">
+                        <div class="word-japanese" id="wordJapanese">Đang tải...</div>
+                        <div class="word-reading" id="wordReading">Đang tải...</div>
+                        <div class="word-info">
+                            <div class="frequency-rank" id="frequencyRank"></div>
+                        </div>
+                        <div class="flip-hint">
+                            👆 Nhấn để xem nghĩa<br>
+                            <small>Hoặc nhấn Space/Enter</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Back Side (Vietnamese) -->
+                    <div class="flashcard-face flashcard-back">
+                        <div class="word-meaning" id="wordMeaning">Đang tải...</div>
+                        <div class="word-details">
+                            <div class="word-type" id="wordType">noun</div>
+                            <div class="word-example">
+                                <div class="word-example-jp" id="wordExampleJp">例文が読み込み中...</div>
+                                <div class="word-example-vn" id="wordExampleVn">Ví dụ đang tải...</div>
+                            </div>
+                            <div class="usage-note" id="usageNote">Ghi chú đang tải...</div>
+                        </div>
+                        <div class="knowledge-level-display">
+                            <small>Mức độ hiểu biết hiện tại: <span id="currentKnowledgeLevel">Chưa học</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Controls -->
+        <div id="studyControls" class="study-controls">
+            <div class="knowledge-explanation">
+                <strong>Đánh giá độ khó của từ này:</strong>
+                <small class="d-block text-muted">Đánh giá này sẽ ảnh hưởng đến thời gian ôn tập</small>
+            </div>
+
+            <div class="knowledge-buttons">
+                <button class="knowledge-btn btn-again" onclick="rateWord(1)" title="Từ này rất khó, cần học lại ngay">
+                    <span style="position: relative; z-index: 2;">
+                        😰 Lại<br>
+                        <small>&lt;1 phút</small>
+                    </span>
+                </button>
+                <button class="knowledge-btn btn-hard" onclick="rateWord(2)" title="Từ này khó, cần ôn tập sớm">
+                    <span style="position: relative; z-index: 2;">
+                        🤔 Khó<br>
+                        <small>&lt;6 phút</small>
+                    </span>
+                </button>
+                <button class="knowledge-btn btn-good" onclick="rateWord(3)" title="Từ này ổn, ôn tập bình thường">
+                    <span style="position: relative; z-index: 2;">
+                        😊 Tốt<br>
+                        <small>&lt;10 phút</small>
+                    </span>
+                </button>
+                <button class="knowledge-btn btn-easy" onclick="rateWord(4)" title="Từ này dễ, có thể ôn tập muộn hơn">
+                    <span style="position: relative; z-index: 2;">
+                        😄 Dễ<br>
+                        <small>4 ngày</small>
+                    </span>
+                </button>
+            </div>
+
+            <div class="control-row">
+                <button class="control-btn secondary" onclick="skipWord()" title="Bỏ qua từ này (S)">
+                    ⏭️ Bỏ qua
+                </button>
+                <button class="control-btn" onclick="flipCard()" title="Lật thẻ (Space/F)">
+                    🔄 Lật thẻ
+                </button>
+                <button class="control-btn secondary" onclick="playAudio()" title="Phát âm (P)">
+                    🔊 Phát âm
+                </button>
+                <button class="control-btn secondary" onclick="showHint()" title="Gợi ý (H)">
+                    💡 Gợi ý
+                </button>
+                <button class="control-btn secondary" onclick="endSession()" title="Kết thúc phiên học (Esc)">
+                    ⏹️ Kết thúc
+                </button>
+            </div>
+
+            <!-- Keyboard Shortcuts Help -->
+            <div class="keyboard-shortcuts mt-3">
+                <small class="text-muted">
+                    <strong>Phím tắt:</strong> 
+                    Space/Enter: Lật thẻ | 1-4: Đánh giá | S: Bỏ qua | P: Phát âm | H: Gợi ý | Esc: Kết thúc
+                </small>
+            </div>
+        </div>
+
+        <!-- Session Complete -->
+        <div id="sessionComplete" class="session-complete" style="display: none;">
+            <div class="complete-icon">🎉</div>
+            <h3>Hoàn thành phiên học!</h3>
+            <p>Chúc mừng bạn đã hoàn thành phiên học từ vựng hôm nay.</p>
+
+            <div class="complete-stats">
+                <div class="complete-stat">
+                    <div class="complete-stat-value" id="completedWords">0</div>
+                    <div>Từ đã học</div>
+                </div>
+                <div class="complete-stat">
+                    <div class="complete-stat-value" id="sessionAccuracy">0%</div>
+                    <div>Độ chính xác</div>
+                </div>
+                <div class="complete-stat">
+                    <div class="complete-stat-value" id="sessionTime">0:00</div>
+                    <div>Thời gian</div>
+                </div>
+                <div class="complete-stat">
+                    <div class="complete-stat-value" id="experienceGained">+0</div>
+                    <div>Kinh nghiệm</div>
+                </div>
+            </div>
+
+            <div class="session-summary">
+                <h5>📊 Tóm tắt phiên học</h5>
+                <div id="ratingSummary" class="rating-summary"></div>
+            </div>
+
+            <div class="complete-actions">
+                <button class="control-btn" onclick="startNewSession()">
+                    📚 Học tiếp
+                </button>
+                <button class="control-btn secondary" onclick="goToQuiz()">
+                    ✏️ Làm quiz
+                </button>
+                <button class="control-btn secondary" onclick="goToStats()">
+                    📊 Xem thống kê
+                </button>
+                <a href="vocabulary-categories.html" class="control-btn secondary">
+                    📋 Về danh sách chủ đề
+                </a>
+                <a href="index.html" class="control-btn secondary">
+                    🏠 Về trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/vocabulary-study.js"></script>
+</body>
+</html>

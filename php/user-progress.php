@@ -1,7 +1,11 @@
 <?php
-// php/user-progress.php - API quản lý tiến độ học tập
+// php/user-progress.php - API quản lý tiến độ học tập (FIXED VERSION)
 
 require_once 'config.php';
+
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Kiểm tra đăng nhập
 if (!isLoggedIn()) {
@@ -45,7 +49,7 @@ function getUserProgress() {
         if (!$progress) {
             // Tạo record mới nếu chưa có
             $db->query(
-                "INSERT INTO user_progress (user_id) VALUES (?)",
+                "INSERT INTO user_progress (user_id, created_at, last_updated) VALUES (?, NOW(), NOW())",
                 [$userId]
             );
             
@@ -78,7 +82,7 @@ function getUserProgress() {
         
     } catch (Exception $e) {
         error_log("Get progress error: " . $e->getMessage());
-        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi lấy tiến độ']);
+        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi lấy tiến độ: ' . $e->getMessage()]);
     }
 }
 
@@ -91,8 +95,11 @@ function saveUserProgress() {
     $score = (int)($_POST['score'] ?? 0);
     $total = (int)($_POST['total'] ?? 0);
     
+    // Debug log
+    error_log("Save progress: type=$type, score=$score, total=$total");
+    
     if (empty($type) || $score < 0 || $total <= 0) {
-        jsonResponse(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
+        jsonResponse(['success' => false, 'message' => 'Dữ liệu không hợp lệ: type=' . $type . ', score=' . $score . ', total=' . $total]);
     }
     
     try {
@@ -110,7 +117,7 @@ function saveUserProgress() {
         ];
         
         if (!isset($typeMapping[$type])) {
-            jsonResponse(['success' => false, 'message' => 'Loại bài học không hợp lệ']);
+            jsonResponse(['success' => false, 'message' => 'Loại bài học không hợp lệ: ' . $type]);
         }
         
         $scoreColumn = $typeMapping[$type][0];
@@ -118,18 +125,13 @@ function saveUserProgress() {
         
         // Kiểm tra xem user đã có record chưa
         $existing = $db->fetchOne(
-            "SELECT id FROM user_progress WHERE user_id = ?",
+            "SELECT id, $scoreColumn as current_score, $totalColumn as current_total FROM user_progress WHERE user_id = ?",
             [$userId]
         );
         
         if ($existing) {
             // Cập nhật record hiện tại (chỉ cập nhật nếu điểm số tốt hơn)
-            $currentProgress = $db->fetchOne(
-                "SELECT $scoreColumn as current_score, $totalColumn as current_total FROM user_progress WHERE user_id = ?",
-                [$userId]
-            );
-            
-            $currentPercentage = calculatePercentage($currentProgress['current_score'], $currentProgress['current_total']);
+            $currentPercentage = calculatePercentage($existing['current_score'], $existing['current_total']);
             $newPercentage = calculatePercentage($score, $total);
             
             if ($newPercentage >= $currentPercentage) {
@@ -137,13 +139,17 @@ function saveUserProgress() {
                     "UPDATE user_progress SET $scoreColumn = ?, $totalColumn = ?, last_updated = NOW() WHERE user_id = ?",
                     [$score, $total, $userId]
                 );
+                error_log("Updated progress for user $userId: $scoreColumn = $score, $totalColumn = $total");
+            } else {
+                error_log("Progress not updated - new percentage ($newPercentage%) is not better than current ($currentPercentage%)");
             }
         } else {
             // Tạo record mới
             $db->query(
-                "INSERT INTO user_progress (user_id, $scoreColumn, $totalColumn, last_updated) VALUES (?, ?, ?, NOW())",
+                "INSERT INTO user_progress (user_id, $scoreColumn, $totalColumn, created_at, last_updated) VALUES (?, ?, ?, NOW(), NOW())",
                 [$userId, $score, $total]
             );
+            error_log("Created new progress record for user $userId");
         }
         
         // Log activity
@@ -157,12 +163,12 @@ function saveUserProgress() {
         
     } catch (Exception $e) {
         error_log("Save progress error: " . $e->getMessage());
-        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi lưu tiến độ']);
+        error_log("Stack trace: " . $e->getTraceAsString());
+        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi lưu tiến độ: ' . $e->getMessage()]);
     }
 }
 
 function updateUserProgress() {
-    // Tương tự saveUserProgress nhưng luôn cập nhật
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         jsonResponse(['success' => false, 'message' => 'Method không hợp lệ']);
     }
@@ -192,15 +198,21 @@ function updateUserProgress() {
         $totalColumn = $typeMapping[$type][1];
         
         // Upsert - Insert or Update
-        $db->query(
-            "INSERT INTO user_progress (user_id, $scoreColumn, $totalColumn, last_updated) 
-             VALUES (?, ?, ?, NOW())
-             ON CONFLICT (user_id) 
-             DO UPDATE SET $scoreColumn = EXCLUDED.$scoreColumn, 
-                          $totalColumn = EXCLUDED.$totalColumn, 
-                          last_updated = NOW()",
-            [$userId, $score, $total]
-        );
+        $existing = $db->fetchOne("SELECT id FROM user_progress WHERE user_id = ?", [$userId]);
+        
+        if ($existing) {
+            // Update existing record
+            $db->query(
+                "UPDATE user_progress SET $scoreColumn = ?, $totalColumn = ?, last_updated = NOW() WHERE user_id = ?",
+                [$score, $total, $userId]
+            );
+        } else {
+            // Insert new record
+            $db->query(
+                "INSERT INTO user_progress (user_id, $scoreColumn, $totalColumn, created_at, last_updated) VALUES (?, ?, ?, NOW(), NOW())",
+                [$userId, $score, $total]
+            );
+        }
         
         logUserActivity($userId, $type, $score, $total);
         
@@ -212,7 +224,7 @@ function updateUserProgress() {
         
     } catch (Exception $e) {
         error_log("Update progress error: " . $e->getMessage());
-        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi cập nhật tiến độ']);
+        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi cập nhật tiến độ: ' . $e->getMessage()]);
     }
 }
 
@@ -224,8 +236,8 @@ function getUserStats() {
         // Lấy thống kê tổng quan
         $stats = $db->fetchOne(
             "SELECT 
-                (hiragana_score + katakana_score + numbers_score + vocabulary_n5_score + vocabulary_n4_score + vocabulary_n3_score) as total_score,
-                (hiragana_total + katakana_total + numbers_total + vocabulary_n5_total + vocabulary_n4_total + vocabulary_n3_total) as total_questions,
+                COALESCE(hiragana_score, 0) + COALESCE(katakana_score, 0) + COALESCE(numbers_score, 0) + COALESCE(vocabulary_n5_score, 0) + COALESCE(vocabulary_n4_score, 0) + COALESCE(vocabulary_n3_score, 0) as total_score,
+                COALESCE(hiragana_total, 0) + COALESCE(katakana_total, 0) + COALESCE(numbers_total, 0) + COALESCE(vocabulary_n5_total, 0) + COALESCE(vocabulary_n4_total, 0) + COALESCE(vocabulary_n3_total, 0) as total_questions,
                 last_updated
              FROM user_progress WHERE user_id = ?",
             [$userId]
@@ -258,7 +270,7 @@ function getUserStats() {
         
     } catch (Exception $e) {
         error_log("Get stats error: " . $e->getMessage());
-        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi lấy thống kê']);
+        jsonResponse(['success' => false, 'message' => 'Có lỗi xảy ra khi lấy thống kê: ' . $e->getMessage()]);
     }
 }
 
@@ -276,6 +288,7 @@ function logUserActivity($userId, $type, $score, $total) {
              VALUES (?, ?, ?, ?, NOW())",
             [$userId, $type, $score, $total]
         );
+        error_log("Logged activity for user $userId: $type - $score/$total");
     } catch (Exception $e) {
         error_log("Log activity error: " . $e->getMessage());
     }

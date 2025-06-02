@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Từ vựng JLPT N5 - Học tiếng Nhật</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans JP', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+        }
+
+        .vocabulary-header {
+            background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 40%, #a8e6cf 100%);
+            color: white;
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vocabulary-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.1) 5deg, transparent 10deg);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .header-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .header-content p {
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 60px 0;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transition: left 0.5s ease;
+        }
+
+        .action-card:hover::before {
+            left: 0;
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-card.secondary {
+            background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 100%);
+            color: white;
+        }
+
+        .action-card.success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .action-card.warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .action-card.info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .action-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-card .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 3;
+        }
+
+        .categories-preview {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .categories-preview h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .category-preview {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-preview.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(50%);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .category-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .category-progress {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #6c757d;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .vocabulary-header {
+                padding: 40px 0;
+            }
+
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .header-content p {
+                font-size: 1.2rem;
+            }
+
+            .progress-overview {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .action-card {
+                padding: 30px 20px;
+            }
+
+            .action-icon {
+                font-size: 3rem;
+            }
+
+            .categories-preview {
+                padding: 30px 20px;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back-button {
+                position: static;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .action-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .category-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .categories-preview {
+                background: #2c3e50;
+                color: #ecf0f1;
+            }
+
+            .category-preview {
+                background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+                color: #ecf0f1;
+            }
+
+            .category-name {
+                color: #ecf0f1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="vocabulary-header">
+        <a href="index.html" class="back-button">← Về trang chủ</a>
+        <div class="container">
+            <div class="header-content">
+                <h1>📚 Từ vựng JLPT N5</h1>
+                <p>Chinh phục 700 từ vựng theo 20 chủ đề thực tế!</p>
+                
+                <!-- Progress Overview -->
+                <div class="progress-overview">
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalLearned">0</span>
+                        <span class="stat-label">từ đã học</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalMastered">0</span>
+                        <span class="stat-label">từ đã thuộc</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="categoriesUnlocked">0</span>
+                        <span class="stat-label">chủ đề đã mở</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="studyTime">0h</span>
+                        <span class="stat-label">thời gian học</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <h4>Đang tải dữ liệu...</h4>
+            <p>Vui lòng chờ trong giây lát</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage">
+            <h5>❌ Có lỗi xảy ra</h5>
+            <p id="errorText"></p>
+            <button class="btn btn-outline-danger mt-2" onclick="loadVocabularyData()">🔄 Thử lại</button>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <h5>✅ Thành công!</h5>
+            <p id="successText"></p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions" id="quickActions" style="display: none;">
+            <a href="vocabulary-categories.html" class="action-card primary">
+                <span class="action-icon">📖</span>
+                <h3>Học theo chủ đề</h3>
+                <p>Chọn chủ đề và học từ vựng theo flashcard tương tác</p>
+                <span class="badge" id="newWordsBadge">0 từ mới</span>
+            </a>
+
+            <a href="vocabulary-review.html" class="action-card secondary">
+                <span class="action-icon">🔄</span>
+                <h3>Ôn tập thông minh</h3>
+                <p>Ôn tập các từ cần nhớ theo thuật toán spaced repetition</p>
+                <span class="badge" id="reviewBadge">0 từ cần ôn</span>
+            </a>
+
+            <a href="vocabulary-quiz.html" class="action-card success">
+                <span class="action-icon">📝</span>
+                <h3>Quiz tổng hợp</h3>
+                <p>Kiểm tra kiến thức với các câu hỏi từ nhiều chủ đề</p>
+                <span class="badge" id="quizBadge">Thử thách</span>
+            </a>
+
+            <a href="vocabulary-search.html" class="action-card warning">
+                <span class="action-icon">🔍</span>
+                <h3>Tra cứu từ vựng</h3>
+                <p>Tìm kiếm và tra cứu từ vựng nhanh chóng</p>
+                <span class="badge">700+ từ</span>
+            </a>
+
+            <a href="vocabulary-stats.html" class="action-card info">
+                <span class="action-icon">📊</span>
+                <h3>Thống kê chi tiết</h3>
+                <p>Xem tiến độ học tập và phân tích kết quả</p>
+                <span class="badge" id="statsBadge">Chi tiết</span>
+            </a>
+        </div>
+
+        <!-- Categories Preview -->
+        <div class="categories-preview" id="categoriesPreview" style="display: none;">
+            <h2>🎯 Chủ đề nổi bật</h2>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- Categories will be loaded here -->
+            </div>
+            <div class="text-center mt-4">
+                <a href="vocabulary-categories.html" class="btn btn-primary btn-lg">
+                    Xem tất cả chủ đề →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        class VocabularyN5Page {
+            constructor() {
+                this.apiBase = 'php/vocabulary-api.php';
+                this.currentUser = null;
+                this.vocabularyData = null;
+                this.init();
+            }
+
+            async init() {
+                console.log('🌸 Initializing Vocabulary N5 page...');
+                
+                // Check authentication
+                if (!await this.checkAuth()) {
+                    this.showError('Vui lòng đăng nhập để truy cập tính năng này!');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                    return;
+                }
+
+                // Load vocabulary data
+                await this.loadVocabularyData();
+                
+                // Setup event listeners
+                this.setupEventListeners();
+                
+                console.log('🌸 Vocabulary N5 page loaded successfully!');
+            }
+
+            async checkAuth() {
+                try {
+                    const response = await fetch('php/auth.php?action=check');
+                    const data = await response.json();
+                    
+                    if (data.success && data.user) {
+                        this.currentUser = data.user;
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Auth check failed:', error);
+                    return false;
+                }
+            }
+
+            async loadVocabularyData() {
+                this.showLoading(true);
+                
+                try {
+                    // Initialize user vocabulary if needed
+                    await this.initializeUser();
+                    
+                    // Load user progress and stats
+                    const [progressData, categoriesData, statsData] = await Promise.all([
+                        this.fetchAPI('get_user_progress'),
+                        this.fetchAPI('get_categories'),
+                        this.fetchAPI('get_vocabulary_stats')
+                    ]);
+
+                    if (progressData.success && categoriesData.success && statsData.success) {
+                        this.vocabularyData = {
+                            progress: progressData.data,
+                            categories: categoriesData.data,
+                            stats: statsData.data
+                        };
+                        
+                        this.updateUI();
+                        this.showContent();
+                    } else {
+                        throw new Error('Failed to load vocabulary data');
+                    }
+                    
+                } catch (error) {
+                    console.error('Load vocabulary data error:', error);
+                    this.showError('Không thể tải dữ liệu từ vựng. Vui lòng thử lại!');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async initializeUser() {
+                try {
+                    await this.fetchAPI('initialize_user', 'POST');
+                } catch (error) {
+                    console.log('User already initialized or error:', error);
+                }
+            }
+
+            async fetchAPI(action, method = 'GET', data = null) {
+                const url = `${this.apiBase}?action=${action}`;
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                };
+                
+                if (data && method === 'POST') {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(url, options);
+                return await response.json();
+            }
+
+            updateUI() {
+                if (!this.vocabularyData) return;
+                
+                const { progress, categories, stats } = this.vocabularyData;
+                
+                // Update header stats
+                this.animateNumber('totalLearned', stats.overall?.vocabulary_words_learned || 0);
+                this.animateNumber('totalMastered', stats.overall?.vocabulary_words_mastered || 0);
+                this.animateNumber('categoriesUnlocked', stats.overall?.vocabulary_categories_unlocked || 0);
+                
+                const studyHours = Math.round((stats.overall?.vocabulary_study_time || 0) / 3600 * 10) / 10;
+                this.animateNumber('studyTime', studyHours, 'h');
+                
+                // Update badges
+                this.updateBadges(stats);
+                
+                // Update categories preview
+                this.updateCategoriesPreview(categories);
+            }
+
+            updateBadges(stats) {
+                // New words badge (estimate based on unlocked categories)
+                const unlockedCategories = stats.overall?.vocabulary_categories_unlocked || 0;
+                const estimatedNewWords = Math.max(0, unlockedCategories * 30 - (stats.overall?.vocabulary_words_learned || 0));
+                document.getElementById('newWordsBadge').textContent = `${estimatedNewWords} từ mới`;
+                
+                // Review words badge
+                const reviewCount = stats.review_count || 0;
+                const reviewBadge = document.getElementById('reviewBadge');
+                reviewBadge.textContent = reviewCount > 0 ? `${reviewCount} từ cần ôn` : 'Không có từ cần ôn';
+                
+                // Stats badge
+                const totalCategories = stats.total_categories || 0;
+                document.getElementById('statsBadge').textContent = `${totalCategories} chủ đề`;
+            }
+
+            updateCategoriesPreview(categories) {
+                const grid = document.getElementById('categoriesGrid');
+                grid.innerHTML = '';
+                
+                // Show first 6 categories (3 unlocked + 3 preview)
+                const previewCategories = categories.slice(0, 6);
+                
+                previewCategories.forEach((category, index) => {
+                    const categoryCard = this.createCategoryPreviewCard(category);
+                    categoryCard.style.animationDelay = `${index * 0.1}s`;
+                    grid.appendChild(categoryCard);
+                });
+            }
+
+            createCategoryPreviewCard(category) {
+                const card = document.createElement('div');
+                card.className = `category-preview fade-in-up ${!category.is_unlocked ? 'locked' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="category-icon" style="color: ${category.color}">${category.icon}</div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-progress">
+                        ${category.learned_words}/${category.total_words} từ
+                        ${category.is_unlocked ? `(${category.completion_percentage}%)` : ''}
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${category.is_unlocked ? category.completion_percentage : 0}%"></div>
+                    </div>
+                    ${!category.is_unlocked ? '<div class="lock-overlay">🔒</div>' : ''}
+                `;
+                
+                if (category.is_unlocked) {
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', () => {
+                        window.location.href = `vocabulary-study.html?category_id=${category.id}`;
+                    });
+                }
+                
+                return card;
+            }
+
+            animateNumber(elementId, targetValue, suffix = '') {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                const startValue = 0;
+                const duration = 1500;
+                const startTime = performance.now();
+                
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Easing function
+                    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                    const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+                    
+                    if (suffix === 'h') {
+                        element.textContent = currentValue + suffix;
+                    } else {
+                        element.textContent = currentValue.toLocaleString('vi-VN') + suffix;
+                    }
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+
+            setupEventListeners() {
+                // Add keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        switch (e.key) {
+                            case 'r':
+                                e.preventDefault();
+                                this.loadVocabularyData();
+                                break;
+                            case '1':
+                                e.preventDefault();
+                                window.location.href = 'vocabulary-categories.html';
+                                break;
+                            case '2':
+                                e.preventDefault();
+                                window.location.href = 'vocabulary-review.html';
+                                break;
+                            case '3':
+                                e.preventDefault();
+                                window.location.href = 'vocabulary-quiz.html';
+                                break;
+                        }
+                    }
+                });
+
+                // Add smooth scroll to top button
+                this.addScrollToTopButton();
+            }
+
+            addScrollToTopButton() {
+                const button = document.createElement('button');
+                button.innerHTML = '⬆️';
+                button.className = 'btn btn-primary position-fixed';
+                button.style.cssText = `
+                    bottom: 30px;
+                    right: 30px;
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    z-index: 1000;
+                    display: none;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                `;
+                
+                button.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 300) {
+                        button.style.display = 'block';
+                    } else {
+                        button.style.display = 'none';
+                    }
+                });
+                
+                document.body.appendChild(button);
+            }
+
+            showLoading(show) {
+                const spinner = document.getElementById('loadingSpinner');
+                if (spinner) {
+                    spinner.style.display = show ? 'block' : 'none';
+                }
+            }
+
+            showContent() {
+                const quickActions = document.getElementById('quickActions');
+                const categoriesPreview = document.getElementById('categoriesPreview');
+                
+                if (quickActions) quickActions.style.display = 'grid';
+                if (categoriesPreview) categoriesPreview.style.display = 'block';
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                const errorText = document.getElementById('errorText');
+                
+                if (errorDiv && errorText) {
+                    errorText.textContent = message;
+                    errorDiv.style.display = 'block';
+                    
+                    // Auto hide after 10 seconds
+                    setTimeout(() => {
+                        errorDiv.style.display = 'none';
+                    }, 10000);
+                }
+            }
+
+            showSuccess(message) {
+                const successDiv = document.getElementById('successMessage');
+                const successText = document.getElementById('successText');
+                
+                if (successDiv && successText) {
+                    successText.textContent = message;
+                    successDiv.style.display = 'block';
+                    
+                    // Auto hide after 5 seconds
+                    setTimeout(() => {
+                        successDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            // Public method to reload data
+            async reload() {
+                await this.loadVocabularyData();
+                this.showSuccess('Đã làm mới dữ liệu thành công!');
+            }
+        }
+
+        // Global functions
+        function loadVocabularyData() {
+            if (window.vocabularyPage) {
+                window.vocabularyPage.reload();
+            }
+        }
+
+        // Initialize page when DOM loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.vocabularyPage = new VocabularyN5Page();
+            
+            // Add transition effects to action cards
+            const actionCards = document.querySelectorAll('.action-card');
+            actionCards.forEach((card, index) => {
+                card.style.animationDelay = `${0.6 + index * 0.1}s`;
+                card.classList.add('fade-in-up');
+            });
+        });
+
+        // Handle page visibility change (reload data when page becomes visible)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && window.vocabularyPage) {
+                // Reload data if page has been hidden for more than 5 minutes
+                const lastLoad = window.vocabularyPage.lastLoadTime || 0;
+                if (Date.now() - lastLoad > 5 * 60 * 1000) {
+                    window.vocabularyPage.reload();
+                }
+            }
+        });
+
+        // Service Worker registration for offline support (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Add performance monitoring
+        window.addEventListener('load', () => {
+            const loadTime = performance.now();
+            console.log(`📚 Vocabulary N5 page loaded in ${Math.round(loadTime)}ms`);
+        });
+
+        // Add error boundary
+        window.addEventListener('error', (event) => {
+            console.error('Page error:', event.error);
+            if (window.vocabularyPage) {
+                window.vocabularyPage.showError('Có lỗi xảy ra trên trang. Vui lòng làm mới!');
+            }
+        });
+
+        // Add unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            if (window.vocabularyPage) {
+                window.vocabularyPage.showError('Có lỗi xảy ra khi tải dữ liệu!');
+            }
+        });
+
+        // Add animation utilities
+        function addScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for scroll animations
+            document.querySelectorAll('.action-card, .category-preview').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        }
+
+        // Initialize scroll animations after DOM loaded
+        document.addEventListener('DOMContentLoaded', addScrollAnimations);
+
+        // Add touch gestures for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!touchStartX || !touchStartY) return;
+
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            const deltaX = touchStartX - touchEndX;
+            const deltaY = touchStartY - touchEndY;
+
+            // Swipe left to go to categories
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                if (deltaX > 0) {
+                    // Swipe left
+                    window.location.href = 'vocabulary-categories.html';
+                } else {
+                    // Swipe right - go back
+                    window.location.href = 'index.html';
+                }
+            }
+
+            touchStartX = 0;
+            touchStartY = 0;
+        });
+
+        // Add keyboard navigation hints
+        function showKeyboardHints() {
+            const hints = document.createElement('div');
+            hints.className = 'keyboard-hints position-fixed';
+            hints.style.cssText = `
+                bottom: 80px;
+                left: 30px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 15px;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                z-index: 1001;
+                display: none;
+            `;
+            hints.innerHTML = `
+                <div><strong>⌨️ Phím tắt:</strong></div>
+                <div>Ctrl+R: Làm mới</div>
+                <div>Ctrl+1: Học theo chủ đề</div>
+                <div>Ctrl+2: Ôn tập</div>
+                <div>Ctrl+3: Quiz</div>
+            `;
+            document.body.appendChild(hints);
+
+            // Show/hide hints on Ctrl key
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    hints.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                if (!e.ctrlKey && !e.metaKey) {
+                    hints.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize keyboard hints
+        document.addEventListener('DOMContentLoaded', showKeyboardHints);
+
+        // Export for testing
+        window.VocabularyN5Page = VocabularyN5Page;
+    </script>
+</body>
+</html>

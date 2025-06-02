@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Dashboard - Học tiếng Nhật</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        /* Dashboard Specific Styles */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #ff9a8b 0%, #ffecd2 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.1) 5deg, transparent 10deg);
+            animation: rotate 30s linear infinite;
+        }
+
+        .user-avatar {
+            font-size: 4rem;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            z-index: 2;
+            position: relative;
+        }
+
+        .user-info {
+            flex: 1;
+            z-index: 2;
+            position: relative;
+        }
+
+        .user-info h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .streak-counter, .total-score {
+            font-size: 1.2rem;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-right: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .level-badge {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .level-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+
+        .progress-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .progress-card.hiragana { border-left: 5px solid #ff9a8b; }
+        .progress-card.katakana { border-left: 5px solid #667eea; }
+        .progress-card.numbers { border-left: 5px solid #56ab2f; }
+        .progress-card.vocabulary { border-left: 5px solid #f093fb; }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .progress-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .circular-progress {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #4CAF50 0deg, #4CAF50 var(--percentage, 0deg), #e0e0e0 var(--percentage, 0deg), #e0e0e0 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .circular-progress::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .circular-progress .percentage {
+            position: relative;
+            z-index: 2;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .accuracy {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .charts-section {
+            padding: 40px;
+            background: white;
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .chart-container h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        #activityHeatmap {
+            display: grid;
+            grid-template-columns: repeat(53, 1fr);
+            gap: 3px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .heatmap-cell {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            background: #ebedf0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            position: relative;
+        }
+
+        .heatmap-cell.level-1 { background: #c6e48b; }
+        .heatmap-cell.level-2 { background: #7bc96f; }
+        .heatmap-cell.level-3 { background: #239a3b; }
+        .heatmap-cell.level-4 { background: #196127; }
+
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .recent-activities, .achievements {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .recent-activities h3, .achievements h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            animation: slideInUp 0.6s ease-out both;
+        }
+
+        .activity-item:hover {
+            background: #e3f2fd;
+            transform: translateX(10px);
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+        }
+
+        .activity-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-score {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .achievement {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: slideInUp 0.6s ease-out both;
+        }
+
+        .achievement.earned {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .achievement.locked {
+            background: #e9ecef;
+            color: #6c757d;
+            opacity: 0.6;
+        }
+
+        .achievement:hover.earned {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(86, 171, 47, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .achievement-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Loading overlay */
+        #dashboardLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .loader-content {
+            text-align: center;
+            color: #667eea;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .user-info h2 {
+                font-size: 2rem;
+            }
+
+            .progress-cards-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .bottom-section {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .charts-section {
+                padding: 20px;
+            }
+
+            .action-buttons {
+                position: static;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            #activityHeatmap {
+                grid-template-columns: repeat(26, 1fr);
+            }
+
+            .back-button {
+                position: static;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .progress-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .circular-progress {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .card-icon {
+                font-size: 2rem;
+            }
+
+            .user-info h2 {
+                font-size: 1.5rem;
+            }
+
+            .streak-counter, .total-score {
+                font-size: 1rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="dashboardLoader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <h4>Đang tải dashboard...</h4>
+            <p>Vui lòng chờ trong giây lát</p>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="refreshDashboard" class="action-btn">🔄 Làm mới</button>
+            <button id="exportStats" class="action-btn">📤 Export</button>
+        </div>
+
+        <!-- Back Button -->
+        <a href="index.html" class="back-button">← Về trang chủ</a>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="user-avatar">🎌</div>
+            <div class="user-info">
+                <h2>こんにちは、さん！</h2>
+                <div class="streak-counter">🔥 Streak: <span class="streak-number">0</span> ngày</div>
+                <div class="total-score">Total Score: <span class="score-number">0</span> điểm</div>
+            </div>
+            <div class="level-badge">
+                <div class="level-circle">N5-</div>
+                <div class="level-text">Beginner</div>
+            </div>
+        </div>
+
+        <!-- Progress Cards -->
+        <div class="progress-cards-grid">
+            <div class="progress-card hiragana">
+                <div class="card-icon">🌸</div>
+                <h3>Hiragana</h3>
+                <div class="circular-progress" style="--percentage: 0deg;">
+                    <span class="percentage">0%</span>
+                </div>
+                <div class="stats">
+                    <span>0/50 ký tự</span>
+                    <span class="accuracy">Độ chính xác: 0%</span>
+                </div>
+            </div>
+
+            <div class="progress-card katakana">
+                <div class="card-icon">🎌</div>
+                <h3>Katakana</h3>
+                <div class="circular-progress" style="--percentage: 0deg;">
+                    <span class="percentage">0%</span>
+                </div>
+                <div class="stats">
+                    <span>0/50 ký tự</span>
+                    <span class="accuracy">Độ chính xác: 0%</span>
+                </div>
+            </div>
+
+            <div class="progress-card numbers">
+                <div class="card-icon">🔢</div>
+                <h3>Số đếm</h3>
+                <div class="circular-progress" style="--percentage: 0deg;">
+                    <span class="percentage">0%</span>
+                </div>
+                <div class="stats">
+                    <span>Level: Chưa bắt đầu</span>
+                    <span class="accuracy">Độ chính xác: 0%</span>
+                </div>
+            </div>
+
+            <div class="progress-card vocabulary">
+                <div class="card-icon">📚</div>
+                <h3>Từ vựng N5</h3>
+                <div class="circular-progress" style="--percentage: 0deg;">
+                    <span class="percentage">0%</span>
+                </div>
+                <div class="stats">
+                    <span>0/500 từ</span>
+                    <span class="accuracy">Độ chính xác: 0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3>📈 Tiến độ học tập theo thời gian</h3>
+                <canvas id="progressChart" height="100"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>🔥 Lịch học tập (365 ngày)</h3>
+                <div id="activityHeatmap"></div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <span class="heatmap-cell" style="display: inline-block; margin: 0 2px;"></span> Ít
+                        <span class="heatmap-cell level-1" style="display: inline-block; margin: 0 2px;"></span>
+                        <span class="heatmap-cell level-2" style="display: inline-block; margin: 0 2px;"></span>
+                        <span class="heatmap-cell level-3" style="display: inline-block; margin: 0 2px;"></span>
+                        <span class="heatmap-cell level-4" style="display: inline-block; margin: 0 2px;"></span> Nhiều
+                    </small>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>🎯 Phân tích kỹ năng</h3>
+                <canvas id="skillsRadar" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <div class="recent-activities">
+                <h3>📝 Hoạt động gần đây</h3>
+                <div class="activity-list">
+                    <div class="text-center text-muted py-4">
+                        <p>Chưa có hoạt động nào</p>
+                        <p>Hãy bắt đầu làm quiz để xem tiến độ!</p>
+                        <a href="hiragana-test.html" class="btn btn-primary mt-2">Bắt đầu quiz</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievements">
+                <h3>🏆 Thành tích</h3>
+                <div class="achievement-grid">
+                    <div class="achievement locked" title="Hoàn thành 50 câu hỏi Hiragana">
+                        <div class="achievement-icon">🌸</div>
+                        <div class="achievement-title">Hiragana Master</div>
+                    </div>
+                    <div class="achievement locked" title="Học liên tục 7 ngày">
+                        <div class="achievement-icon">🔥</div>
+                        <div class="achievement-title">Week Streak</div>
+                    </div>
+                    <div class="achievement locked" title="Đạt 90% độ chính xác">
+                        <div class="achievement-icon">🎯</div>
+                        <div class="achievement-title">Sharp Shooter</div>
+                    </div>
+                    <div class="achievement locked" title="Hoàn thành Katakana">
+                        <div class="achievement-icon">🎌</div>
+                        <div class="achievement-title">Katakana Expert</div>
+                    </div>
+                    <div class="achievement locked" title="Đạt 1000 điểm">
+                        <div class="achievement-icon">⭐</div>
+                        <div class="achievement-title">High Scorer</div>
+                    </div>
+                    <div class="achievement locked" title="Hoàn thành N5">
+                        <div class="achievement-icon">📖</div>
+                        <div class="achievement-title">N5 Graduate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

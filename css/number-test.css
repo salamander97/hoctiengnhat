@@ -1,0 +1,358 @@
+/* css/number-test.css - CSS dành riêng cho trang Kiểm Tra Số Đếm */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Noto Sans JP', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(45deg, #ffd93d, #ff9a8b);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.1) 5deg, transparent 10deg);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    100% { transform: rotate(360deg); }
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.header p {
+    font-size: 1.2rem;
+    position: relative;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.content {
+    padding: 40px;
+}
+
+.section {
+    margin-bottom: 40px;
+    padding: 30px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #fefefe 0%, #f1f1f1 100%);
+    border-left: 5px solid #ffd93d;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+}
+
+.section h2::before {
+    content: '🔢';
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+.range-select, .quiz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.range-btn, .option-btn {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 5px 15px rgba(107, 114, 128, 0.3);
+    transition: all 0.3s ease;
+}
+
+.range-btn:hover, .option-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+}
+
+.option-btn {
+    width: 100%;
+    max-width: 350px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    color: #2c3e50;
+    font-weight: bold;
+    padding: 20px 30px;
+    margin: 10px 0;
+}
+
+.option-btn:hover {
+    background: linear-gradient(135deg, #c7d2fe 0%, #e0e7ff 100%);
+    color: #1e40af;
+}
+
+.option-btn.correct {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+    color: white !important;
+    animation: bounce 0.3s;
+}
+
+.option-btn.wrong {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+    color: white !important;
+    animation: shake 0.3s;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.score-box {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #ffd93d 0%, #ff9a8b 100%);
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 16px rgba(255, 217, 61, 0.3);
+}
+
+.restart-btn {
+    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 5px 15px rgba(250, 204, 21, 0.3);
+    transition: all 0.3s ease;
+}
+
+.restart-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #eab308 0%, #facc15 100%);
+}
+
+.hidden {
+    display: none;
+}
+
+#options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#question {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+#feedback {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.feedback-correct {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724 !important;
+}
+
+.feedback-wrong {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24 !important;
+}
+
+/* Styles cho thẻ chứa các ví dụ và ghi chú */
+.number-info {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 5px 15px rgba(0, 149, 255, 0.15);
+}
+
+.number-info h3 {
+    color: #0369a1;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #0ea5e9;
+    padding-bottom: 8px;
+}
+
+.example-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.example-item {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0369a1;
+}
+
+.reading {
+    color: #0284c7;
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+.note {
+    background: #fffbeb;
+    border-left: 4px solid #fbbf24;
+    padding: 12px 15px;
+    margin-top: 15px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+}
+
+.quiz-mode {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .range-btn, .option-btn, .restart-btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .option-btn {
+        max-width: 300px;
+        padding: 15px 20px;
+    }
+
+    .section {
+        padding: 20px;
+    }
+
+    #options {
+        gap: 12px;
+    }
+
+    #question {
+        font-size: 3rem;
+    }
+
+    .back-button {
+        position: static;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .example-list {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
