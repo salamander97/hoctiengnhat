@@ -1,0 +1,649 @@
+create table users
+(
+    id            serial
+        primary key,
+    username      varchar(50)  not null
+        unique,
+    email         varchar(100)
+        unique,
+    password_hash varchar(255) not null,
+    display_name  varchar(100),
+    is_active     boolean                  default true,
+    created_at    timestamp with time zone default now(),
+    updated_at    timestamp with time zone default now(),
+    last_login    timestamp with time zone
+);
+
+comment on table users is 'Bảng lưu thông tin người dùng';
+
+alter table users
+    owner to postgres;
+
+grant select, update, usage on sequence users_id_seq to trunghieu;
+
+create index idx_users_username
+    on users (username);
+
+create index idx_users_email
+    on users (email);
+
+create index idx_users_active
+    on users (is_active);
+
+grant delete, insert, references, select, trigger, truncate, update on users to trunghieu;
+
+create table user_activities
+(
+    id              serial
+        primary key,
+    user_id         integer
+        references users
+            on delete cascade,
+    activity_type   varchar(50)                        not null,
+    score           integer                  default 0 not null,
+    total_questions integer                  default 0 not null
+        constraint chk_activity_total
+            check (total_questions > 0),
+    time_spent      integer,
+    created_at      timestamp with time zone default now(),
+    constraint chk_activity_score
+        check ((score >= 0) AND (score <= total_questions))
+);
+
+comment on table user_activities is 'Bảng lưu lịch sử hoạt động học tập';
+
+alter table user_activities
+    owner to postgres;
+
+grant select, update, usage on sequence user_activities_id_seq to trunghieu;
+
+create index idx_user_activities_user_id
+    on user_activities (user_id);
+
+create index idx_user_activities_type
+    on user_activities (activity_type);
+
+create index idx_user_activities_date
+    on user_activities (created_at);
+
+create index idx_user_activities_user_created_at
+    on user_activities (user_id, created_at);
+
+grant delete, insert, references, select, trigger, truncate, update on user_activities to trunghieu;
+
+create table quiz_sessions
+(
+    id              serial
+        primary key,
+    user_id         integer
+        references users
+            on delete cascade,
+    quiz_type       varchar(50)                        not null,
+    total_questions integer                            not null,
+    correct_answers integer                  default 0 not null,
+    time_spent      integer,
+    started_at      timestamp with time zone default now(),
+    completed_at    timestamp with time zone,
+    is_completed    boolean                  default false
+);
+
+comment on table quiz_sessions is 'Bảng lưu thông tin chi tiết các phiên quiz';
+
+alter table quiz_sessions
+    owner to postgres;
+
+grant select, update, usage on sequence quiz_sessions_id_seq to trunghieu;
+
+create index idx_quiz_sessions_user_id
+    on quiz_sessions (user_id);
+
+create index idx_quiz_sessions_type
+    on quiz_sessions (quiz_type);
+
+create index idx_quiz_sessions_completed
+    on quiz_sessions (is_completed);
+
+create index idx_quiz_sessions_user_type_completed
+    on quiz_sessions (user_id, quiz_type, is_completed);
+
+grant delete, insert, references, select, trigger, truncate, update on quiz_sessions to trunghieu;
+
+create table user_achievements
+(
+    id               serial
+        primary key,
+    user_id          integer
+        references users
+            on delete cascade,
+    achievement_type varchar(50) not null,
+    achievement_data jsonb,
+    earned_at        timestamp with time zone default now(),
+    unique (user_id, achievement_type)
+);
+
+comment on table user_achievements is 'Bảng lưu thành tích/huy hiệu của người dùng';
+
+alter table user_achievements
+    owner to postgres;
+
+grant select, update, usage on sequence user_achievements_id_seq to trunghieu;
+
+create index idx_user_achievements_user_id
+    on user_achievements (user_id);
+
+create index idx_user_achievements_type
+    on user_achievements (achievement_type);
+
+grant delete, insert, references, select, trigger, truncate, update on user_achievements to trunghieu;
+
+create table user_progress_backup
+(
+    id                  integer,
+    user_id             integer,
+    hiragana_score      integer,
+    hiragana_total      integer,
+    katakana_score      integer,
+    katakana_total      integer,
+    numbers_score       integer,
+    numbers_total       integer,
+    vocabulary_n5_score integer,
+    vocabulary_n5_total integer,
+    vocabulary_n4_score integer,
+    vocabulary_n4_total integer,
+    vocabulary_n3_score integer,
+    vocabulary_n3_total integer,
+    created_at          timestamp with time zone,
+    last_updated        timestamp with time zone,
+    updated_at          timestamp with time zone
+);
+
+alter table user_progress_backup
+    owner to postgres;
+
+grant delete, insert, references, select, trigger, truncate, update on user_progress_backup to trunghieu;
+
+create table user_progress
+(
+    id                             serial
+        primary key,
+    user_id                        integer
+        unique
+        references users
+            on delete cascade,
+    hiragana_score                 integer                  default 0,
+    hiragana_total                 integer                  default 0,
+    katakana_score                 integer                  default 0,
+    katakana_total                 integer                  default 0,
+    numbers_score                  integer                  default 0,
+    numbers_total                  integer                  default 0,
+    vocabulary_n5_score            integer                  default 0,
+    vocabulary_n5_total            integer                  default 0,
+    vocabulary_n4_score            integer                  default 0,
+    vocabulary_n4_total            integer                  default 0,
+    vocabulary_n3_score            integer                  default 0,
+    vocabulary_n3_total            integer                  default 0,
+    created_at                     timestamp with time zone default now(),
+    last_updated                   timestamp with time zone default now(),
+    updated_at                     timestamp with time zone default now(),
+    vocabulary_categories_unlocked integer                  default 2,
+    vocabulary_words_learned       integer                  default 0,
+    vocabulary_words_mastered      integer                  default 0,
+    vocabulary_total_score         integer                  default 0,
+    vocabulary_study_time          integer                  default 0,
+    constraint chk_hiragana_score
+        check ((hiragana_score >= 0) AND ((hiragana_total = 0) OR (hiragana_score <= hiragana_total))),
+    constraint chk_katakana_score
+        check ((katakana_score >= 0) AND ((katakana_total = 0) OR (katakana_score <= katakana_total))),
+    constraint chk_numbers_score
+        check ((numbers_score >= 0) AND ((numbers_total = 0) OR (numbers_score <= numbers_total)))
+);
+
+alter table user_progress
+    owner to postgres;
+
+grant select, update, usage on sequence user_progress_id_seq to trunghieu;
+
+create index idx_user_progress_user_id
+    on user_progress (user_id);
+
+create index idx_user_progress_updated
+    on user_progress (last_updated);
+
+grant delete, insert, references, select, trigger, truncate, update on user_progress to trunghieu;
+
+create table vocabulary_categories
+(
+    id               serial
+        primary key,
+    category_name    varchar(100) not null,
+    category_name_en varchar(100) not null,
+    category_icon    varchar(10)              default '📚'::character varying,
+    category_color   varchar(7)               default '#667eea'::character varying,
+    description      text,
+    difficulty_level integer                  default 1
+        constraint vocabulary_categories_difficulty_level_check
+            check ((difficulty_level >= 1) AND (difficulty_level <= 3)),
+    estimated_hours  numeric(3, 1)            default 2.0,
+    total_words      integer                  default 0,
+    display_order    integer                  default 0,
+    unlock_condition jsonb,
+    is_active        boolean                  default true,
+    created_at       timestamp with time zone default now()
+);
+
+alter table vocabulary_categories
+    owner to postgres;
+
+grant select, update, usage on sequence vocabulary_categories_id_seq to trunghieu;
+
+grant delete, insert, references, select, trigger, truncate, update on vocabulary_categories to trunghieu;
+
+create table vocabulary_words
+(
+    id                  serial
+        primary key,
+    category_id         integer
+        references vocabulary_categories
+            on delete cascade,
+    japanese_word       varchar(100) not null,
+    kanji               varchar(100),
+    romaji              varchar(100) not null,
+    vietnamese_meaning  text         not null,
+    word_type           varchar(50)              default 'noun'::character varying,
+    example_sentence_jp text,
+    example_sentence_vn text,
+    usage_note          text,
+    frequency_rank      integer                  default 3
+        constraint vocabulary_words_frequency_rank_check
+            check ((frequency_rank >= 1) AND (frequency_rank <= 5)),
+    audio_url           varchar(255),
+    image_url           varchar(255),
+    jlpt_level          varchar(5)               default 'N5'::character varying,
+    display_order       integer                  default 0,
+    is_active           boolean                  default true,
+    created_at          timestamp with time zone default now(),
+    unique (category_id, japanese_word)
+);
+
+alter table vocabulary_words
+    owner to postgres;
+
+grant select, update, usage on sequence vocabulary_words_id_seq to trunghieu;
+
+create index idx_vocabulary_words_category
+    on vocabulary_words (category_id);
+
+create index idx_vocabulary_words_active
+    on vocabulary_words (is_active);
+
+grant delete, insert, references, select, trigger, truncate, update on vocabulary_words to trunghieu;
+
+create table user_category_progress
+(
+    id                    serial
+        primary key,
+    user_id               integer
+        references users
+            on delete cascade,
+    category_id           integer
+        references vocabulary_categories
+            on delete cascade,
+    total_words           integer                  default 0,
+    learned_words         integer                  default 0,
+    mastered_words        integer                  default 0,
+    quiz_best_score       integer                  default 0,
+    quiz_attempts         integer                  default 0,
+    total_study_time      integer                  default 0,
+    last_studied_at       timestamp with time zone,
+    completion_percentage numeric(5, 2)            default 0.00,
+    is_completed          boolean                  default false,
+    is_unlocked           boolean                  default false,
+    created_at            timestamp with time zone default now(),
+    updated_at            timestamp with time zone default now(),
+    unique (user_id, category_id)
+);
+
+alter table user_category_progress
+    owner to postgres;
+
+grant select, update, usage on sequence user_category_progress_id_seq to trunghieu;
+
+create index idx_user_category_progress_user
+    on user_category_progress (user_id);
+
+grant delete, insert, references, select, trigger, truncate, update on user_category_progress to trunghieu;
+
+create table user_word_knowledge
+(
+    id                serial
+        primary key,
+    user_id           integer
+        references users
+            on delete cascade,
+    word_id           integer
+        references vocabulary_words
+            on delete cascade,
+    knowledge_level   integer                  default 0
+        constraint user_word_knowledge_knowledge_level_check
+            check ((knowledge_level >= 0) AND (knowledge_level <= 5)),
+    correct_count     integer                  default 0,
+    wrong_count       integer                  default 0,
+    ease_factor       numeric(3, 2)            default 2.50,
+    interval_days     integer                  default 1,
+    last_reviewed_at  timestamp with time zone,
+    next_review_at    timestamp with time zone,
+    difficulty_rating integer                  default 3
+        constraint user_word_knowledge_difficulty_rating_check
+            check ((difficulty_rating >= 1) AND (difficulty_rating <= 5)),
+    created_at        timestamp with time zone default now(),
+    updated_at        timestamp with time zone default now(),
+    unique (user_id, word_id)
+);
+
+alter table user_word_knowledge
+    owner to postgres;
+
+grant select, update, usage on sequence user_word_knowledge_id_seq to trunghieu;
+
+create index idx_user_word_knowledge_user
+    on user_word_knowledge (user_id);
+
+create index idx_user_word_knowledge_review
+    on user_word_knowledge (next_review_at);
+
+grant delete, insert, references, select, trigger, truncate, update on user_word_knowledge to trunghieu;
+
+create table vocabulary_quiz_sessions
+(
+    id              serial
+        primary key,
+    user_id         integer
+        references users
+            on delete cascade,
+    category_id     integer
+        references vocabulary_categories
+            on delete cascade,
+    quiz_type       varchar(50)              default 'category'::character varying,
+    total_questions integer not null,
+    correct_answers integer                  default 0,
+    time_spent      integer                  default 0,
+    score           integer                  default 0,
+    percentage      numeric(5, 2)            default 0.00,
+    started_at      timestamp with time zone default now(),
+    completed_at    timestamp with time zone,
+    is_completed    boolean                  default false,
+    quiz_data       jsonb
+);
+
+alter table vocabulary_quiz_sessions
+    owner to postgres;
+
+grant select, update, usage on sequence vocabulary_quiz_sessions_id_seq to trunghieu;
+
+create index idx_quiz_sessions_user
+    on vocabulary_quiz_sessions (user_id);
+
+grant delete, insert, references, select, trigger, truncate, update on vocabulary_quiz_sessions to trunghieu;
+
+create function uuid_nil() returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_nil() owner to postgres;
+
+grant execute on function uuid_nil() to trunghieu;
+
+create function uuid_ns_dns() returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_ns_dns() owner to postgres;
+
+grant execute on function uuid_ns_dns() to trunghieu;
+
+create function uuid_ns_url() returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_ns_url() owner to postgres;
+
+grant execute on function uuid_ns_url() to trunghieu;
+
+create function uuid_ns_oid() returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_ns_oid() owner to postgres;
+
+grant execute on function uuid_ns_oid() to trunghieu;
+
+create function uuid_ns_x500() returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_ns_x500() owner to postgres;
+
+grant execute on function uuid_ns_x500() to trunghieu;
+
+create function uuid_generate_v1() returns uuid
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_generate_v1() owner to postgres;
+
+grant execute on function uuid_generate_v1() to trunghieu;
+
+create function uuid_generate_v1mc() returns uuid
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_generate_v1mc() owner to postgres;
+
+grant execute on function uuid_generate_v1mc() to trunghieu;
+
+create function uuid_generate_v3(namespace uuid, name text) returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_generate_v3(uuid, text) owner to postgres;
+
+grant execute on function uuid_generate_v3(uuid, text) to trunghieu;
+
+create function uuid_generate_v4() returns uuid
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_generate_v4() owner to postgres;
+
+grant execute on function uuid_generate_v4() to trunghieu;
+
+create function uuid_generate_v5(namespace uuid, name text) returns uuid
+    immutable
+    strict
+    parallel safe
+    language c
+as
+$$
+begin
+-- missing source code
+end;
+$$;
+
+alter function uuid_generate_v5(uuid, text) owner to postgres;
+
+grant execute on function uuid_generate_v5(uuid, text) to trunghieu;
+
+create function update_updated_at_column() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$;
+
+alter function update_updated_at_column() owner to postgres;
+
+create trigger update_users_updated_at
+    before update
+    on users
+    for each row
+execute procedure update_updated_at_column();
+
+create trigger update_user_progress_updated_at
+    before update
+    on user_progress
+    for each row
+execute procedure update_updated_at_column();
+
+grant execute on function update_updated_at_column() to trunghieu;
+
+create function calculate_learning_streak(p_user_id integer) returns integer
+    language plpgsql
+as
+$$
+DECLARE
+    streak INTEGER := 0;
+    current_date DATE := CURRENT_DATE;
+    activity_dates DATE[];
+    i INTEGER;
+BEGIN
+    -- Lấy danh sách các ngày có hoạt động (distinct)
+    SELECT ARRAY_AGG(DISTINCT DATE(created_at) ORDER BY DATE(created_at) DESC)
+    INTO activity_dates
+    FROM user_activities
+    WHERE user_id = p_user_id;
+    
+    -- Kiểm tra streak từ ngày hiện tại
+    FOR i IN 1..COALESCE(array_length(activity_dates, 1), 0) LOOP
+        IF activity_dates[i] = current_date - INTERVAL '1 day' * (i - 1) THEN
+            streak := streak + 1;
+        ELSE
+            EXIT;
+        END IF;
+    END LOOP;
+    
+    RETURN streak;
+END;
+$$;
+
+alter function calculate_learning_streak(integer) owner to postgres;
+
+grant execute on function calculate_learning_streak(integer) to trunghieu;
+
+create function safe_update_timestamp() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    -- Cập nhật last_updated (luôn có trong user_progress)
+    NEW.last_updated = NOW();
+    
+    -- Cập nhật updated_at nếu column tồn tại
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = TG_TABLE_NAME AND column_name = 'updated_at'
+    ) THEN
+        NEW.updated_at = NOW();
+    END IF;
+    
+    RETURN NEW;
+END;
+$$;
+
+alter function safe_update_timestamp() owner to trunghieu;
+
+create function update_vocabulary_updated_at() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$;
+
+alter function update_vocabulary_updated_at() owner to postgres;
+
+create trigger update_user_category_progress_updated_at
+    before update
+    on user_category_progress
+    for each row
+execute procedure update_vocabulary_updated_at();
+
+create trigger update_user_word_knowledge_updated_at
+    before update
+    on user_word_knowledge
+    for each row
+execute procedure update_vocabulary_updated_at();
+

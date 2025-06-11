@@ -10,23 +10,23 @@ class VocabularyStudy {
         this.currentWords = [];
         this.currentWordIndex = 0;
         this.studiedWords = [];
-        
+
         // Session info
         this.currentCategoryId = null;
         this.sessionType = 'new';
         this.sessionStartTime = Date.now();
         this.isCardFlipped = false;
         this.categoryInfo = null;
-        
+
         // API configuration
         this.apiBase = 'php/vocabulary-api.php';
-        
+
         // Debug mode
         this.debugMode = false;
-        
+
         // Data source tracking
         this.dataSource = 'unknown';
-        
+
         // Sample data for emergency fallback only
         this.sampleWords = [
             {
@@ -60,7 +60,7 @@ class VocabularyStudy {
                 frequency_rank: 2,
                 knowledge_level: 0,
                 category: {
-                    name: 'Chào hỏi & Giao tiếp', 
+                    name: 'Chào hỏi & Giao tiếp',
                     icon: '👋',
                     color: '#FF6B6B'
                 }
@@ -79,7 +79,7 @@ class VocabularyStudy {
                 knowledge_level: 0,
                 category: {
                     name: 'Chào hỏi & Giao tiếp',
-                    icon: '👋', 
+                    icon: '👋',
                     color: '#FF6B6B'
                 }
             }
@@ -91,7 +91,7 @@ class VocabularyStudy {
      */
     async init() {
         console.log('🎌 Khởi tạo Vocabulary Study Manager...');
-        
+
         // Parse URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         this.currentCategoryId = urlParams.get('category_id');
@@ -114,10 +114,10 @@ class VocabularyStudy {
 
         // Load vocabulary data
         await this.loadWords();
-        
+
         // Setup UI event listeners
         this.setupEventListeners();
-        
+
         console.log('✅ Vocabulary Study Manager đã sẵn sàng!');
         this.updateDebugInfo();
     }
@@ -143,54 +143,150 @@ class VocabularyStudy {
         try {
             this.showLoading(true);
             console.log('🔍 Loading words for category:', this.currentCategoryId, 'Type:', this.sessionType);
-            
-            // Construct API URL
-            const apiUrl = `${this.apiBase}?action=get_category_words&category_id=${this.currentCategoryId}&mode=${this.sessionType}&limit=50`;
+    
+            // Construct API URL - thử mode hiện tại trước
+            let mode = this.sessionType;
+            const apiUrl = `${this.apiBase}?action=get_category_words&category_id=${this.currentCategoryId}&mode=${mode}&limit=50`;
             console.log('🌐 API URL:', apiUrl);
-            
+    
             // Fetch data from API
             const response = await fetch(apiUrl);
             const data = await response.json();
-            
+    
             console.log('📊 Full API Response:', data);
             this.updateDebugInfo('API Response: ' + JSON.stringify({
                 success: data.success,
                 count: data.data?.length || 0,
                 message: data.message
             }));
-            
-            // Check if API returned valid data
+    
             if (data.success && data.data && Array.isArray(data.data) && data.data.length > 0) {
                 // ✅ SUCCESS: Use database data
                 this.words = data.data;
                 this.currentWords = data.data;
                 this.dataSource = 'database';
-                
-                console.log(`✅ Loaded ${this.words.length} words from database`);
-                console.log('📝 Sample word from database:', this.words[0]);
-                
-                // Extract category info from first word
+    
                 if (this.words[0] && this.words[0].category) {
                     this.categoryInfo = this.words[0].category;
                 }
-                
+    
+                console.log(`✅ Loaded ${this.words.length} words from database`);
                 this.renderWords();
-            } else {
-                // ❌ API failed or no data
-                console.warn('⚠️ API failed or returned no data:', data);
-                throw new Error(data.message || 'No words found in database');
+                return;
             }
-            
+    
+            // ❌ No data, thử fallback nếu mode là 'new'
+            if (mode === 'new') {
+                console.warn('⚠️ No new words found, switching to mode=all automatically...');
+                const fallbackUrl = `${this.apiBase}?action=get_category_words&category_id=${this.currentCategoryId}&mode=all&limit=50`;
+                const fallbackResponse = await fetch(fallbackUrl);
+                const fallbackData = await fallbackResponse.json();
+    
+                if (fallbackData.success && fallbackData.data && fallbackData.data.length > 0) {
+                    this.words = fallbackData.data;
+                    this.currentWords = fallbackData.data;
+                    this.dataSource = 'database';
+                    this.sessionType = 'all'; // ✨ Update để UI phản ánh
+    
+                    if (this.words[0] && this.words[0].category) {
+                        this.categoryInfo = this.words[0].category;
+                    }
+    
+                    console.log(`✅ Loaded ${this.words.length} words (all mode) from database`);
+                    this.showNotification('🎓 Bạn đã học hết từ mới! Đang hiển thị lại toàn bộ từ để ôn tập.', 'info');
+                    this.renderWords();
+                    return;
+                }
+            }
+    
+            // Nếu vẫn không có từ nào
+            console.warn('⚠️ API failed or returned no data:', data);
+            throw new Error(data.message || 'No words found in database');
+    
         } catch (error) {
             console.error('❌ Load words error:', error);
-            
-            // Show error modal with options
-            this.showErrorModal(
-                `Không thể tải từ vựng từ database: ${error.message}`,
-                error
-            );
+    
+            if (error.message && error.message.includes('No words found')) {
+                this.showNoNewWordsScreen();
+            } else {
+                this.showErrorModal(`Không thể tải từ vựng từ database: ${error.message}`, error);
+            }
         } finally {
             this.showLoading(false);
+        }
+    }
+    
+    /**
+     * Show no new words screen
+     */
+    showNoNewWordsScreen() {
+        // Hide study UI
+        document.querySelector('.study-header').style.display = 'none';
+        document.querySelector('.flashcard-container').style.display = 'none';
+        document.getElementById('studyControls').style.display = 'none';
+
+        // Show no new words screen
+        document.getElementById('noNewWords').style.display = 'block';
+    }
+
+    /**
+     * Switch to review mode (all words)
+     */
+    reviewMode() {
+        this.sessionType = 'all';
+        this.showLoading(true);
+        this.loadWords();
+
+        // Show study UI again
+        document.querySelector('.study-header').style.display = 'block';
+        document.querySelector('.flashcard-container').style.display = 'flex';
+        document.getElementById('studyControls').style.display = 'block';
+        document.getElementById('noNewWords').style.display = 'none';
+    }
+
+    /**
+     * Reset progress for current category
+     */
+    async resetProgress() {
+        if (!confirm('Bạn có chắc muốn reset toàn bộ tiến độ học chủ đề này? Điều này sẽ xóa tất cả từ đã học!')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.apiBase}?action=reset_category_progress`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    category_id: this.currentCategoryId
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.showNotification('✅ Đã reset tiến độ! Bắt đầu học lại từ đầu.', 'success');
+
+                // Reload with new mode
+                this.sessionType = 'new';
+                setTimeout(() => {
+                    this.loadWords();
+
+                    // Show study UI again
+                    document.querySelector('.study-header').style.display = 'block';
+                    document.querySelector('.flashcard-container').style.display = 'flex';
+                    document.getElementById('studyControls').style.display = 'block';
+                    document.getElementById('noNewWords').style.display = 'none';
+                }, 1000);
+
+            } else {
+                this.showNotification('❌ Không thể reset tiến độ: ' + data.message, 'error');
+            }
+
+        } catch (error) {
+            console.error('Reset progress error:', error);
+            this.showNotification('❌ Có lỗi xảy ra khi reset tiến độ!', 'error');
         }
     }
 
@@ -202,21 +298,21 @@ class VocabularyStudy {
         this.currentWords = [...this.sampleWords];
         this.words = [...this.sampleWords];
         this.dataSource = 'sample';
-        
+
         // Extract category info from sample data
         if (this.sampleWords[0] && this.sampleWords[0].category) {
             this.categoryInfo = this.sampleWords[0].category;
         }
-        
+
         this.updateDebugInfo('Using sample data');
         this.renderWords();
-        
+
         // Hide error modal
         const errorModal = bootstrap.Modal.getInstance(document.getElementById('errorModal'));
         if (errorModal) {
             errorModal.hide();
         }
-        
+
         this.showNotification('Đang sử dụng dữ liệu mẫu. Một số tính năng có thể bị hạn chế.', 'warning');
     }
 
@@ -231,18 +327,18 @@ class VocabularyStudy {
 
         console.log('🎌 Rendering words. Total:', this.currentWords.length);
         console.log('📝 Sample word structure:', this.currentWords[0]);
-        
+
         // Update category display
         this.updateCategoryDisplay();
-        
+
         // Update data source indicator
         this.updateDataSourceDisplay();
-        
+
         // Reset session state
         this.currentWordIndex = 0;
         this.studiedWords = [];
         this.sessionStartTime = Date.now();
-        
+
         // Show first word
         this.showCurrentWord();
     }
@@ -254,7 +350,7 @@ class VocabularyStudy {
         const categoryNameEl = document.getElementById('categoryName');
         const categoryIconEl = document.getElementById('categoryIcon');
         const categoryTextEl = document.getElementById('categoryText');
-        
+
         if (this.categoryInfo) {
             // Use category info from word data
             if (categoryIconEl) categoryIconEl.textContent = this.categoryInfo.icon || '📚';
@@ -281,7 +377,7 @@ class VocabularyStudy {
                 'unknown': '❓ Nguồn không xác định'
             };
             dataSourceEl.textContent = sourceText[this.dataSource] || sourceText.unknown;
-            
+
             // Add color coding
             if (this.dataSource === 'database') {
                 dataSourceEl.style.color = '#28a745';
@@ -306,7 +402,7 @@ class VocabularyStudy {
         // Update progress bar
         const progress = ((this.currentWordIndex) / this.currentWords.length) * 100;
         document.getElementById('studyProgress').style.width = progress + '%';
-        
+
         // Update progress text
         const progressTextEl = document.getElementById('progressText');
         if (progressTextEl) {
@@ -321,7 +417,7 @@ class VocabularyStudy {
             'all': 'Tất cả từ'
         };
         document.getElementById('sessionType').textContent = sessionTypeText[this.sessionType] || 'Học từ vựng';
-        
+
         this.updateDebugInfo();
     }
 
@@ -329,28 +425,82 @@ class VocabularyStudy {
      * Show current word in flashcard
      */
     showCurrentWord() {
-        // Check if session is complete
         if (this.currentWordIndex >= this.currentWords.length) {
             this.completeSession();
             return;
         }
-
+    
         const word = this.currentWords[this.currentWordIndex];
         console.log('🔄 Displaying word:', word);
-
+    
         if (!word) {
-            console.error('❌ Current word is undefined!');
-            this.showError('Có lỗi xảy ra khi hiển thị từ vựng!');
+            this.showNotification('❌ Không có dữ liệu từ vựng!', 'error');
             return;
         }
-
-        // Update front side (Japanese)
-        const wordJapanese = word.kanji || word.japanese_word || 'N/A';
-        const wordReading = word.romaji || word.japanese_word || 'N/A';
+    
+        // Front: Từ tiếng Nhật
+        const wordJapanese = word.kanji && word.japanese_word && word.kanji !== word.japanese_word
+            ? `${word.kanji} (${word.japanese_word})`
+            : (word.kanji || word.japanese_word || 'N/A');
+        const wordReading = word.romaji || word.japanese_word || '';
+    
+        // Kiểm tra element tồn tại trước khi set
+        const wordJapaneseEl = document.getElementById('wordJapanese');
+        const wordReadingEl = document.getElementById('wordReading');
+        const wordMeaningEl = document.getElementById('wordMeaning');
+        const wordTypeEl = document.getElementById('wordType');
+        const wordExampleJpEl = document.getElementById('wordExampleJp');
+        const wordExampleVnEl = document.getElementById('wordExampleVn');
+        const usageNoteEl = document.getElementById('usageNote');
+    
+        if (wordJapaneseEl) wordJapaneseEl.textContent = wordJapanese;
+        if (wordReadingEl) wordReadingEl.textContent = wordReading;
+    
+        // Back: Nghĩa tiếng Việt & ví dụ
+        if (wordMeaningEl) wordMeaningEl.textContent = word.vietnamese_meaning || 'Không có nghĩa';
         
-        document.getElementById('wordJapanese').textContent = wordJapanese;
-        document.getElementById('wordReading').textContent = wordReading;
-        
+        // Sửa phần ví dụ - không dùng wordExample mà dùng wordExampleJp và wordExampleVn
+        if (wordExampleJpEl) {
+            wordExampleJpEl.textContent = word.example_sentence_jp || 'Không có ví dụ';
+        }
+        if (wordExampleVnEl) {
+            wordExampleVnEl.textContent = word.example_sentence_vn || 'Không có dịch';
+        }
+    
+        // Word type
+        if (wordTypeEl) {
+            wordTypeEl.textContent = this.formatWordType(word.word_type);
+        }
+    
+        // Usage note
+        if (usageNoteEl) {
+            usageNoteEl.textContent = word.usage_note || 'Không có ghi chú';
+        }
+    
+        // Difficulty
+        this.updateDifficultyIndicator(word);
+    
+        // Intervals
+        this.updateIntervalPredictions(word);
+    
+        // Reset card state
+        const flashcard = document.getElementById('flashcard');
+        if (flashcard) {
+            flashcard.classList.remove('flipped');
+            this.isCardFlipped = false;
+            flashcard.focus();
+        }
+    
+        // Update info
+        this.updateSessionInfo();
+        this.animateCardEntrance();
+    }
+    updateDifficultyIndicator(word) {
+        const currentKnowledgeLevelEl = document.getElementById('currentKnowledgeLevel');
+        if (currentKnowledgeLevelEl && word.knowledge_level !== undefined) {
+            currentKnowledgeLevelEl.textContent = this.getKnowledgeLevelText(word.knowledge_level);
+        }
+    
         // Update frequency rank if available
         const frequencyRankEl = document.getElementById('frequencyRank');
         if (frequencyRankEl && word.frequency_rank) {
@@ -359,56 +509,28 @@ class VocabularyStudy {
         } else if (frequencyRankEl) {
             frequencyRankEl.style.display = 'none';
         }
-
-        // Update back side (Vietnamese)
-        const wordMeaning = word.vietnamese_meaning || 'Không có nghĩa';
-        const wordType = this.formatWordType(word.word_type);
-        const exampleJp = word.example_sentence_jp || 'Không có ví dụ';
-        const exampleVn = word.example_sentence_vn || 'Không có dịch';
-        const usageNote = word.usage_note || 'Không có ghi chú';
-
-        document.getElementById('wordMeaning').textContent = wordMeaning;
-        document.getElementById('wordType').textContent = wordType;
-        document.getElementById('wordExampleJp').textContent = exampleJp;
-        document.getElementById('wordExampleVn').textContent = exampleVn;
-        document.getElementById('usageNote').textContent = usageNote;
-
-        // Update knowledge level display
-        const knowledgeLevelEl = document.getElementById('currentKnowledgeLevel');
-        if (knowledgeLevelEl) {
-            const levelText = this.getKnowledgeLevelText(word.knowledge_level || 0);
-            knowledgeLevelEl.textContent = levelText;
-        }
-
-        // Debug verification
-        console.log('✅ Word data set:', {
-            Japanese: wordJapanese,
-            Reading: wordReading,
-            Meaning: wordMeaning,
-            Type: wordType,
-            Example_JP: exampleJp,
-            Example_VN: exampleVn,
-            Usage: usageNote,
-            Knowledge_Level: word.knowledge_level
-        });
-
-        // Reset card state
-        this.isCardFlipped = false;
-        const flashcard = document.getElementById('flashcard');
-        flashcard.classList.remove('flipped');
-
-        // Update controls state
-        this.updateControlsState();
-
-        // Update session info
+    }
+    
+    /**
+     * Update interval predictions (placeholder for spaced repetition)
+     */
+    updateIntervalPredictions(word) {
+        // TODO: Implement spaced repetition interval predictions
+        // This would show how long until next review based on current knowledge level
+        console.log('Interval predictions for word:', word.id, 'level:', word.knowledge_level);
+    }
+    
+    /**
+     * Update review info display
+     */
+    updateReviewInfo() {
+        // Update session counters
         this.updateSessionInfo();
         
-        // Focus flashcard for keyboard navigation
-        flashcard.focus();
-        
-        // Animate card entrance
-        this.animateCardEntrance();
+        // Update controls state
+        this.updateControlsState();
     }
+    
 
     /**
      * Format word type for display
@@ -416,7 +538,7 @@ class VocabularyStudy {
     formatWordType(type) {
         const types = {
             'noun': '🏷️ Danh từ',
-            'verb': '⚡ Động từ', 
+            'verb': '⚡ Động từ',
             'adjective': '🎨 Tính từ',
             'adverb': '💫 Trạng từ',
             'particle': '🔗 Trợ từ',
@@ -424,7 +546,8 @@ class VocabularyStudy {
             'number': '🔢 Số',
             'pronoun': '👤 Đại từ',
             'conjunction': '🔗 Liên từ',
-            'interjection': '❗ Thán từ'
+            'interjection': '❗ Thán từ',
+            'greeting': '👋 Lời chào'
         };
         return types[type] || `📝 ${type || 'Khác'}`;
     }
@@ -481,9 +604,7 @@ class VocabularyStudy {
         this.updateControlsState();
 
         // Show notification
-        const message = this.isCardFlipped ? '🔄 Đã lật thẻ - Hãy đánh giá độ khó!' : '🔄 Quay lại mặt trước';
-        this.showNotification(message, 'info');
-        
+
         this.updateDebugInfo();
     }
 
@@ -504,7 +625,7 @@ class VocabularyStudy {
 
         try {
             console.log('💾 Rating word:', word.id, 'Rating:', rating);
-            
+
             // Save to studied words
             this.studiedWords.push({
                 ...word,
@@ -519,11 +640,10 @@ class VocabularyStudy {
             }
 
             // Show feedback
-            this.showRatingFeedback(rating);
-            
+
             // Move to next word after delay
             setTimeout(() => this.nextWord(), 1000);
-            
+
         } catch (error) {
             console.error('❌ Rate word error:', error);
             this.showNotification('Có lỗi xảy ra khi lưu đánh giá!', 'error');
@@ -559,41 +679,13 @@ class VocabularyStudy {
         }
     }
 
-    /**
-     * Show rating feedback
-     */
-    showRatingFeedback(rating) {
-        const messages = {
-            1: { text: '🔄 Sẽ xem lại sau 1 phút', color: '#ef4444', emoji: '😰' },
-            2: { text: '⏰ Sẽ xem lại sau 6 phút', color: '#f59e0b', emoji: '🤔' },
-            3: { text: '✅ Sẽ xem lại sau 10 phút', color: '#10b981', emoji: '😊' },
-            4: { text: '🎉 Sẽ xem lại sau 4 ngày', color: '#3b82f6', emoji: '😄' }
-        };
-
-        const feedback = messages[rating];
-        if (feedback) {
-            this.showNotification(`${feedback.emoji} ${feedback.text}`, 'success');
-            
-            // Visual feedback on flashcard
-            const flashcard = document.getElementById('flashcard');
-            flashcard.style.transform = 'scale(0.95)';
-            flashcard.style.border = `4px solid ${feedback.color}`;
-            flashcard.style.boxShadow = `0 0 30px ${feedback.color}50`;
-            
-            setTimeout(() => {
-                flashcard.style.transform = 'scale(1)';
-                flashcard.style.border = 'none';
-                flashcard.style.boxShadow = '0 25px 70px rgba(0, 0, 0, 0.15)';
-            }, 800);
-        }
-    }
 
     /**
      * Move to next word
      */
     nextWord() {
         this.currentWordIndex++;
-        
+
         if (this.currentWordIndex >= this.currentWords.length) {
             this.completeSession();
         } else {
@@ -639,25 +731,25 @@ class VocabularyStudy {
         if (!word) return;
 
         const textToSpeak = word.japanese_word || word.kanji || '';
-        
+
         if ('speechSynthesis' in window && textToSpeak) {
             // Cancel any ongoing speech
             speechSynthesis.cancel();
-            
+
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = 'ja-JP';
             utterance.rate = 0.8;
             utterance.pitch = 1;
             utterance.volume = 0.8;
-            
+
             utterance.onstart = () => {
                 this.showNotification('🔊 Đang phát âm...', 'info');
             };
-            
+
             utterance.onerror = () => {
                 this.showNotification('❌ Không thể phát âm!', 'error');
             };
-            
+
             speechSynthesis.speak(utterance);
         } else {
             this.showNotification('Trình duyệt không hỗ trợ phát âm hoặc không có dữ liệu âm thanh!', 'warning');
@@ -695,7 +787,7 @@ class VocabularyStudy {
 
         // Show celebration
         this.showCelebration();
-        
+
         // Log completion
         console.log('🎉 Session completed:', {
             totalWords,
@@ -772,7 +864,7 @@ class VocabularyStudy {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: requestData
+                body: JSON.stringify(requestData)
             });
 
             const data = await response.json();
@@ -802,7 +894,7 @@ class VocabularyStudy {
         `;
 
         const emojis = ['🎉', '🌟', '✨', '🎊', '👏', '🥳', '🏆', '💯'];
-        
+
         for (let i = 0; i < 60; i++) {
             const confetti = document.createElement('div');
             confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -829,17 +921,17 @@ class VocabularyStudy {
         this.currentWordIndex = 0;
         this.studiedWords = [];
         this.sessionStartTime = Date.now();
-        
+
         // Show loading and reload words
         this.showLoading(true);
         this.loadWords();
-        
+
         // Show study UI
         document.querySelector('.study-header').style.display = 'block';
         document.querySelector('.flashcard-container').style.display = 'flex';
         document.getElementById('studyControls').style.display = 'block';
         document.getElementById('sessionComplete').style.display = 'none';
-        
+
         this.showNotification('🔄 Bắt đầu phiên học mới!', 'success');
     }
 
@@ -870,10 +962,10 @@ class VocabularyStudy {
      */
     endSession() {
         const studiedCount = this.studiedWords.length;
-        const confirmMessage = studiedCount > 0 
+        const confirmMessage = studiedCount > 0
             ? `Bạn đã học ${studiedCount} từ. Có chắc muốn kết thúc phiên học?`
             : 'Bạn có chắc muốn kết thúc phiên học?';
-            
+
         if (confirm(confirmMessage)) {
             if (studiedCount > 0) {
                 this.completeSession();
@@ -888,7 +980,7 @@ class VocabularyStudy {
      */
     setupEventListeners() {
         console.log('🎮 Setting up event listeners...');
-        
+
         const flashcard = document.getElementById('flashcard');
         if (!flashcard) {
             console.error('❌ Flashcard element not found for event listeners!');
@@ -960,7 +1052,7 @@ class VocabularyStudy {
 
         // Touch gestures
         this.setupTouchGestures();
-        
+
         console.log('✅ All event listeners ready');
     }
 
@@ -979,7 +1071,7 @@ class VocabularyStudy {
 
         flashcard.addEventListener('touchend', (e) => {
             if (!startX || !startY) return;
-            
+
             const endX = e.changedTouches[0].clientX;
             const endY = e.changedTouches[0].clientY;
             const diffX = startX - endX;
@@ -1023,12 +1115,12 @@ class VocabularyStudy {
 
         flashcard.style.transform = 'translateY(30px) scale(0.95)';
         flashcard.style.opacity = '0.5';
-        
+
         setTimeout(() => {
             flashcard.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             flashcard.style.transform = 'translateY(0) scale(1)';
             flashcard.style.opacity = '1';
-            
+
             setTimeout(() => {
                 flashcard.style.transition = 'transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)';
             }, 600);
@@ -1045,7 +1137,7 @@ class VocabularyStudy {
             debugInfo.style.display = this.debugMode ? 'block' : 'none';
         }
         this.updateDebugInfo();
-        
+
         this.showNotification(`Debug mode: ${this.debugMode ? 'ON' : 'OFF'}`, 'info');
     }
 
@@ -1089,7 +1181,7 @@ class VocabularyStudy {
      */
     showError(message, critical = false) {
         console.error('❌ Error:', message);
-        
+
         if (critical) {
             // Show error modal for critical errors
             this.showErrorModal(message);
@@ -1109,7 +1201,7 @@ class VocabularyStudy {
 
         const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
         errorModal.show();
-        
+
         console.error('❌ Critical error:', message, error);
     }
 
@@ -1140,7 +1232,7 @@ class VocabularyStudy {
         `;
 
         document.body.appendChild(notification);
-        
+
         // Auto remove after delay
         setTimeout(() => {
             if (notification.parentNode) {
@@ -1198,8 +1290,16 @@ function useSampleData() {
     if (studyManager) studyManager.useSampleData();
 }
 
+function reviewMode() {
+    if (studyManager) studyManager.reviewMode();
+}
+
+function resetProgress() {
+    if (studyManager) studyManager.resetProgress();
+}
+
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 DOM loaded, khởi tạo Vocabulary Study Manager...');
     studyManager = new VocabularyStudy();
     studyManager.init();

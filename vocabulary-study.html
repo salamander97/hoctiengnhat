@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/vocabulary-study.css">
 </head>
+
 <body>
     <!-- Debug Info -->
     <div id="debugInfo" class="debug-info" style="display: none;">
@@ -53,7 +55,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" onclick="window.location.reload()">Làm mới trang</button>
+                    <button type="button" class="btn btn-primary" onclick="window.location.reload()">Làm mới
+                        trang</button>
                     <button type="button" class="btn btn-warning" onclick="useSampleData()">Dùng dữ liệu mẫu</button>
                 </div>
             </div>
@@ -78,7 +81,7 @@
                     <span id="categoryText">Đang tải...</span>
                 </div>
                 <div class="session-type-info">
-                    Phiên học: <span id="sessionType">Từ mới</span> | 
+                    Phiên học: <span id="sessionType">Từ mới</span> |
                     <span id="dataSource">Đang xác định nguồn dữ liệu...</span>
                 </div>
             </div>
@@ -130,7 +133,7 @@
                             <small>Hoặc nhấn Space/Enter</small>
                         </div>
                     </div>
-                    
+
                     <!-- Back Side (Vietnamese) -->
                     <div class="flashcard-face flashcard-back">
                         <div class="word-meaning" id="wordMeaning">Đang tải...</div>
@@ -205,7 +208,7 @@
             <!-- Keyboard Shortcuts Help -->
             <div class="keyboard-shortcuts mt-3">
                 <small class="text-muted">
-                    <strong>Phím tắt:</strong> 
+                    <strong>Phím tắt:</strong>
                     Space/Enter: Lật thẻ | 1-4: Đánh giá | S: Bỏ qua | P: Phát âm | H: Gợi ý | Esc: Kết thúc
                 </small>
             </div>
@@ -236,6 +239,8 @@
                 </div>
             </div>
 
+
+
             <div class="session-summary">
                 <h5>📊 Tóm tắt phiên học</h5>
                 <div id="ratingSummary" class="rating-summary"></div>
@@ -259,10 +264,32 @@
                 </a>
             </div>
         </div>
+        <!-- Thêm sau div sessionComplete -->
+        <div id="noNewWords" class="session-complete" style="display: none;">
+            <div class="complete-icon">🎓</div>
+            <h3>Đã học hết từ mới!</h3>
+            <p>Bạn đã học hết tất cả từ vựng trong chủ đề này. Hãy ôn tập hoặc thử thách bản thân!</p>
+
+            <div class="complete-actions">
+                <button class="control-btn" onclick="reviewMode()">
+                    🔄 Ôn tập tất cả từ
+                </button>
+                <button class="control-btn secondary" onclick="resetProgress()">
+                    ⚡ Reset tiến độ học
+                </button>
+                <button class="control-btn secondary" onclick="goToQuiz()">
+                    ✏️ Làm quiz
+                </button>
+                <a href="vocabulary-categories.html" class="control-btn secondary">
+                    📋 Chọn chủ đề khác
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="js/vocabulary-study.js"></script>
 </body>
+
 </html>

@@ -152,55 +152,108 @@ class VocabularyManager {
      * @param int $userId
      * @param int $categoryId
      */
-    public function updateCategoryProgress($userId, $categoryId) {
-        try {
-            // Lấy tổng số từ trong category
-            $totalWords = $this->db->fetchOne(
-                "SELECT COUNT(*) as total FROM vocabulary_words WHERE category_id = ? AND is_active = true",
-                [$categoryId]
-            )['total'];
-            
-            // Đếm số từ đã học (knowledge_level >= 1)
-            $learnedWords = $this->db->fetchOne(
-                "SELECT COUNT(*) as learned 
-                 FROM user_word_knowledge uwk
-                 JOIN vocabulary_words vw ON uwk.word_id = vw.id
-                 WHERE uwk.user_id = ? AND vw.category_id = ? AND uwk.knowledge_level >= 1",
-                [$userId, $categoryId]
-            )['learned'] ?? 0;
-            
-            // Đếm số từ đã thành thạo (knowledge_level >= 4)
-            $masteredWords = $this->db->fetchOne(
-                "SELECT COUNT(*) as mastered 
-                 FROM user_word_knowledge uwk
-                 JOIN vocabulary_words vw ON uwk.word_id = vw.id
-                 WHERE uwk.user_id = ? AND vw.category_id = ? AND uwk.knowledge_level >= 4",
-                [$userId, $categoryId]
-            )['mastered'] ?? 0;
-            
-            // Tính completion percentage
-            $completionPercentage = $this->calculateCompletion($masteredWords, $totalWords);
-            $isCompleted = $completionPercentage >= 80; // 80% mastered = completed
-            
-            // Cập nhật progress
+ public function updateCategoryProgress($userId, $categoryId) {
+    try {
+        error_log("🔄 [FIX] Updating progress for user $userId, category $categoryId");
+        
+        // 1. Lấy tổng số từ trong category (active words only)
+        $totalWordsResult = $this->db->fetchOne(
+            "SELECT COUNT(*) as total FROM vocabulary_words WHERE category_id = ? AND is_active = true",
+            [$categoryId]
+        );
+        $totalWords = $totalWordsResult['total'] ?? 0;
+        
+        if ($totalWords == 0) {
+            error_log("❌ No active words found for category: $categoryId");
+            return false;
+        }
+        
+        error_log("📊 Total active words in category $categoryId: $totalWords");
+
+        // 2. Đếm số từ đã học (knowledge_level >= 1) - FIX QUERY
+        $learnedWordsResult = $this->db->fetchOne(
+            "SELECT COUNT(*) as learned 
+             FROM user_word_knowledge uwk
+             INNER JOIN vocabulary_words vw ON uwk.word_id = vw.id
+             WHERE uwk.user_id = ? 
+               AND vw.category_id = ? 
+               AND vw.is_active = true 
+               AND uwk.knowledge_level >= 1",
+            [$userId, $categoryId]
+        );
+        $learnedWords = $learnedWordsResult['learned'] ?? 0;
+        
+        // 3. Đếm số từ đã thành thạo (knowledge_level >= 4) - FIX QUERY
+        $masteredWordsResult = $this->db->fetchOne(
+            "SELECT COUNT(*) as mastered 
+             FROM user_word_knowledge uwk
+             INNER JOIN vocabulary_words vw ON uwk.word_id = vw.id
+             WHERE uwk.user_id = ? 
+               AND vw.category_id = ? 
+               AND vw.is_active = true 
+               AND uwk.knowledge_level >= 4",
+            [$userId, $categoryId]
+        );
+        $masteredWords = $masteredWordsResult['mastered'] ?? 0;
+        
+        error_log("📈 [FIX] Progress stats: learned=$learnedWords, mastered=$masteredWords of $totalWords total");
+        
+        // 4. Tính completion percentage dựa trên learned words
+        $completionPercentage = $totalWords > 0 ? round(($learnedWords / $totalWords) * 100, 2) : 0.0;
+        $isCompleted = $completionPercentage >= 80; // 80% learned = completed
+        
+        error_log("📊 [FIX] Completion: $completionPercentage% (completed: " . ($isCompleted ? 'true' : 'false') . ")");
+        
+        // 5. Cập nhật hoặc tạo progress record
+        $existingProgress = $this->db->fetchOne(
+            "SELECT id, completion_percentage FROM user_category_progress WHERE user_id = ? AND category_id = ?",
+            [$userId, $categoryId]
+        );
+        
+        if (!$existingProgress) {
+            // Tạo record mới
+            error_log("🆕 [FIX] Creating new progress record");
+            $this->db->query(
+                "INSERT INTO user_category_progress 
+                 (user_id, category_id, total_words, learned_words, mastered_words, 
+                  completion_percentage, is_completed, is_unlocked, last_studied_at, created_at, updated_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, true, NOW(), NOW(), NOW())",
+                [$userId, $categoryId, $totalWords, $learnedWords, $masteredWords, 
+                 $completionPercentage, $isCompleted]
+            );
+        } else {
+            // Update existing record
+            error_log("🔄 [FIX] Updating existing progress. Old: {$existingProgress['completion_percentage']}% -> New: $completionPercentage%");
             $this->db->query(
                 "UPDATE user_category_progress 
                  SET total_words = ?, learned_words = ?, mastered_words = ?, 
-                     completion_percentage = ?, is_completed = ?, updated_at = NOW()
+                     completion_percentage = ?, is_completed = ?, last_studied_at = NOW(), updated_at = NOW()
                  WHERE user_id = ? AND category_id = ?",
-                [$totalWords, $learnedWords, $masteredWords, $completionPercentage, $isCompleted, $userId, $categoryId]
+                [$totalWords, $learnedWords, $masteredWords, $completionPercentage, 
+                 $isCompleted, $userId, $categoryId]
             );
-            
-            // Cập nhật unlock cho các categories khác
-            $this->updateCategoryUnlocks($userId);
-            
-            // Cập nhật tổng tiến độ vocabulary trong user_progress
-            $this->updateOverallVocabularyProgress($userId);
-            
-        } catch (Exception $e) {
-            error_log("Update category progress error: " . $e->getMessage());
         }
+        
+        // 6. Verify kết quả sau khi update
+        $verifyProgress = $this->db->fetchOne(
+            "SELECT completion_percentage, learned_words, mastered_words, updated_at 
+             FROM user_category_progress WHERE user_id = ? AND category_id = ?",
+            [$userId, $categoryId]
+        );
+        error_log("✅ [FIX] Verified progress: " . json_encode($verifyProgress));
+        
+        // 7. Update category unlocks và overall progress
+        $this->updateCategoryUnlocks($userId);
+        $this->updateOverallVocabularyProgress($userId);
+        
+        return true;
+        
+    } catch (Exception $e) {
+        error_log("❌ [FIX] Update category progress error: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        return false;
     }
+}
     
     /**
      * Cập nhật tổng tiến độ vocabulary
