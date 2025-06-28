@@ -1,0 +1,1202 @@
+{ japanese: "せんせい", romaji: "sensei", meaning: "giáo viên", type: "danh từ" },
+                        { japanese: "にほんじん", romaji: "nihonjin", meaning: "người Nhật", type: "danh từ" },
+                        { japanese: "アメリカじん", romaji: "amerikajin", meaning: "người Mỹ", type: "danh từ" },
+                        { japanese: "はじめまして", romaji: "hajimemashite", meaning: "rất vui được gặp", type: "chào hỏi" },
+                        { japanese: "よろしく", romaji: "yoroshiku", meaning: "xin chào (khi gặp lần đầu)", type: "chào hỏi" },
+                        { japanese: "こんにちは", romaji: "konnichiwa", meaning: "xin chào (buổi trưa)", type: "chào hỏi" },
+                        { japanese: "さようなら", romaji: "sayounara", meaning: "tạm biệt", type: "chào hỏi" }
+                    ],
+                    2: [
+                        { japanese: "これ", romaji: "kore", meaning: "cái này", type: "đại từ chỉ định" },
+                        { japanese: "それ", romaji: "sore", meaning: "cái đó", type: "đại từ chỉ định" },
+                        { japanese: "あれ", romaji: "are", meaning: "cái kia", type: "đại từ chỉ định" },
+                        { japanese: "この", romaji: "kono", meaning: "cái này (+ danh từ)", type: "đại từ chỉ định" },
+                        { japanese: "その", romaji: "sono", meaning: "cái đó (+ danh từ)", type: "đại từ chỉ định" },
+                        { japanese: "あの", romaji: "ano", meaning: "cái kia (+ danh từ)", type: "đại từ chỉ định" }
+                    ]
+                };
+
+                const vocabulary = vocabularyByLesson[this.lessonId] || [
+                    { japanese: "たんご", romaji: "tango", meaning: "từ vựng", type: "danh từ" },
+                    { japanese: "べんきょう", romaji: "benkyou", meaning: "học tập", type: "danh từ" }
+                ];
+
+                this.questions = this.generateQuestions(vocabulary);
+                this.updateLessonInfo();
+                this.showStartScreen();
+                this.hideLoading();
+            }<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Quiz từ vựng - Minna no Nihongo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/lesson-quiz.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="quiz-header">
+        <a href="#" onclick="goBack()" class="back-button">← Về bài học</a>
+        <div class="container">
+            <div class="header-content">
+                <div class="lesson-info">
+                    <span class="lesson-number" id="lessonNumber">1</span>
+                    <div class="lesson-details">
+                        <h1 id="lessonTitle">Quiz: Giới thiệu bản thân</h1>
+                        <p id="lessonTitleJp">第1課：自己紹介</p>
+                    </div>
+                </div>
+                
+                <!-- Quiz Progress -->
+                <div class="quiz-progress">
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="currentQuestion">1</span>
+                            <span class="stat-label">Câu hỏi</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalQuestions">10</span>
+                            <span class="stat-label">Tổng số câu</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="correctCount">0</span>
+                            <span class="stat-label">Đúng</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="currentScore">0</span>
+                            <span class="stat-label">Điểm</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        
+        <!-- Loading State -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <h4>Đang tải câu hỏi...</h4>
+        </div>
+
+        <!-- Quiz Start Screen -->
+        <div class="quiz-start" id="quizStart" style="display: none;">
+            <div class="start-content">
+                <div class="start-icon">📝</div>
+                <h2>Sẵn sàng làm quiz?</h2>
+                <p>Quiz này sẽ kiểm tra kiến thức từ vựng của bạn với nhiều dạng câu hỏi khác nhau</p>
+                
+                <div class="quiz-info">
+                    <div class="info-item">
+                        <span class="info-icon">📊</span>
+                        <div class="info-text">
+                            <strong>10 câu hỏi</strong>
+                            <p>Trắc nghiệm và tự luận</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <div class="info-text">
+                            <strong>5-10 phút</strong>
+                            <p>Không giới hạn thời gian</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎯</span>
+                        <div class="info-text">
+                            <strong>100 điểm</strong>
+                            <p>10 điểm mỗi câu đúng</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="start-button" onclick="startQuiz()">
+                    🚀 Bắt đầu Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            
+            <!-- Question Card -->
+            <div class="question-card" id="questionCard">
+                <div class="question-header">
+                    <span class="question-type" id="questionType">Chọn nghĩa đúng</span>
+                    <span class="question-number" id="questionNumber">Câu 1/10</span>
+                </div>
+                
+                <div class="question-content" id="questionContent">
+                    <!-- Question will be loaded here -->
+                </div>
+                
+                <div class="answer-section" id="answerSection">
+                    <!-- Answers will be loaded here -->
+                </div>
+
+                <div class="question-actions">
+                    <button class="action-btn skip-btn" onclick="skipQuestion()" id="skipBtn">
+                        ⏭️ Bỏ qua
+                    </button>
+                    <button class="action-btn submit-btn" onclick="submitAnswer()" id="submitBtn" disabled>
+                        ✅ Trả lời
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audio Controls (for audio questions) -->
+            <div class="audio-controls" id="audioControls" style="display: none;">
+                <button class="audio-btn" onclick="playAudio()">
+                    🔊 Nghe lại
+                </button>
+                <span class="audio-hint">Nghe và chọn từ đúng</span>
+            </div>
+
+        </div>
+
+        <!-- Quiz Results -->
+        <div class="quiz-results" id="quizResults" style="display: none;">
+            <div class="results-content">
+                <div class="results-icon" id="resultsIcon">🎉</div>
+                <h2 id="resultsTitle">Chúc mừng!</h2>
+                <p id="resultsMessage">Bạn đã hoàn thành quiz</p>
+                
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <span class="stat-number" id="finalScore">80</span>
+                        <span class="stat-text">điểm</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-number" id="finalCorrect">8</span>
+                        <span class="stat-text">câu đúng</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-number" id="finalPercentage">80%</span>
+                        <span class="stat-text">chính xác</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-number" id="timeSpent">5</span>
+                        <span class="stat-text">phút</span>
+                    </div>
+                </div>
+
+                <div class="performance-badge" id="performanceBadge">
+                    <span class="badge-icon">🏆</span>
+                    <span class="badge-text">Xuất sắc!</span>
+                </div>
+
+                <div class="wrong-answers" id="wrongAnswers" style="display: none;">
+                    <h3>📝 Câu trả lời sai</h3>
+                    <div class="wrong-list" id="wrongList">
+                        <!-- Wrong answers will be shown here -->
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="retakeQuiz()">🔄 Làm lại</button>
+                    <button class="btn btn-success" onclick="goToStudy()">📚 Học lại từ vựng</button>
+                    <button class="btn btn-secondary" onclick="goToLessonList()">📖 Bài khác</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Audio element -->
+    <audio id="audioPlayer" style="display: none;"></audio>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        class LessonQuizPage {
+            constructor() {
+                this.lessonId = this.getLessonIdFromUrl();
+                this.currentQuestionIndex = 0;
+                this.questions = [];
+                this.answers = [];
+                this.score = 0;
+                this.correctCount = 0;
+                this.startTime = Date.now();
+                this.selectedAnswer = null;
+                this.vocabularyData = [];
+                this.lessonData = null;
+                this.sessionId = null;
+                this.init();
+            }
+
+            init() {
+                console.log(`📝 Starting quiz for lesson ${this.lessonId}...`);
+                
+                if (!this.lessonId) {
+                    this.showError('Không tìm thấy bài học!');
+                    return;
+                }
+
+                this.loadQuizData();
+                this.setupKeyboardListeners();
+            }
+
+            getLessonIdFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return parseInt(urlParams.get('lesson')) || null;
+            }
+
+            loadQuizData() {
+                // Call API to get lesson vocabulary
+                const userId = this.getCurrentUserId();
+                
+                fetch(`php/n5-lessons-api.php?action=getLessonVocabulary&lesson_id=${this.lessonId}&user_id=${userId}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            this.vocabularyData = result.data.vocabulary;
+                            this.lessonData = result.data.lesson;
+                            this.questions = this.generateQuestions(result.data.vocabulary);
+                            this.updateLessonInfo();
+                            this.showStartScreen();
+                            this.hideLoading();
+                        } else {
+                            throw new Error(result.error || 'Failed to load vocabulary');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Load vocabulary error:', error);
+                        this.showError(`Không thể tải từ vựng: ${error.message}`);
+                    });
+            }
+
+            getCurrentUserId() {
+                // Get current user ID from auth system
+                // For now, return a mock user ID
+                return 1;
+            }
+
+            generateQuestions(vocabulary) {
+                const questions = [];
+                const questionTypes = ['jp_to_vn', 'vn_to_jp', 'romaji_to_jp', 'audio'];
+
+                // Generate 10 questions or based on vocabulary length
+                const questionCount = Math.min(10, vocabulary.length * 2);
+                
+                for (let i = 0; i < questionCount; i++) {
+                    const word = vocabulary[i % vocabulary.length];
+                    const questionType = questionTypes[i % questionTypes.length];
+                    
+                    let question = this.createQuestion(word, questionType, vocabulary);
+                    if (question) {
+                        questions.push(question);
+                    }
+                }
+
+                return questions.slice(0, 10); // Limit to 10 questions
+            }
+
+            createQuestion(word, type, allVocabulary) {
+                const question = {
+                    id: Date.now() + Math.random(),
+                    type: type,
+                    word: word,
+                    word_id: word.id,
+                    correctAnswer: null,
+                    options: [],
+                    userAnswer: null,
+                    isCorrect: false
+                };
+
+                switch (type) {
+                    case 'jp_to_vn':
+                        question.questionText = word.japanese_word;
+                        question.questionSubtext = `(${word.romaji})`;
+                        question.correctAnswer = word.vietnamese_meaning;
+                        question.options = this.generateOptions(word.vietnamese_meaning, allVocabulary.map(v => v.vietnamese_meaning));
+                        question.typeLabel = 'Chọn nghĩa đúng';
+                        break;
+
+                    case 'vn_to_jp':
+                        question.questionText = word.vietnamese_meaning;
+                        question.correctAnswer = word.japanese_word;
+                        question.options = this.generateOptions(word.japanese_word, allVocabulary.map(v => v.japanese_word));
+                        question.typeLabel = 'Chọn từ tiếng Nhật đúng';
+                        break;
+
+                    case 'romaji_to_jp':
+                        question.questionText = word.romaji;
+                        question.questionSubtext = `Nghĩa: ${word.vietnamese_meaning}`;
+                        question.correctAnswer = word.japanese_word;
+                        question.options = this.generateOptions(word.japanese_word, allVocabulary.map(v => v.japanese_word));
+                        question.typeLabel = 'Chọn cách viết Hiragana/Katakana đúng';
+                        break;
+
+                    case 'audio':
+                        question.questionText = '🔊 Nghe và chọn từ đúng';
+                        question.audioText = word.japanese_word;
+                        question.correctAnswer = word.vietnamese_meaning;
+                        question.options = this.generateOptions(word.vietnamese_meaning, allVocabulary.map(v => v.vietnamese_meaning));
+                        question.typeLabel = 'Câu hỏi nghe';
+                        question.isAudio = true;
+                        break;
+                }
+
+                return question;
+            }
+
+            generateOptions(correctAnswer, allOptions) {
+                // Get 3 random wrong options
+                const wrongOptions = allOptions
+                    .filter(option => option !== correctAnswer)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+
+                // Add default options if not enough
+                while (wrongOptions.length < 3) {
+                    const defaultOptions = ['khác', 'không biết', 'không có'];
+                    wrongOptions.push(defaultOptions[wrongOptions.length % defaultOptions.length]);
+                }
+
+                // Combine with correct answer and shuffle
+                const options = [correctAnswer, ...wrongOptions]
+                    .sort(() => Math.random() - 0.5);
+
+                return options;
+            }
+
+            updateLessonInfo() {
+                // Update lesson info in header using real lesson data
+                if (this.lessonData) {
+                    document.getElementById('lessonNumber').textContent = this.lessonData.lesson_number;
+                    document.getElementById('lessonTitle').textContent = `Quiz: ${this.lessonData.lesson_title}`;
+                    document.getElementById('lessonTitleJp').textContent = this.lessonData.lesson_title_jp;
+                }
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+            }
+
+            showStartScreen() {
+                document.getElementById('quizStart').style.display = 'block';
+            }
+
+            startQuiz() {
+                document.getElementById('quizStart').style.display = 'none';
+                document.getElementById('quizContainer').style.display = 'block';
+                this.startTime = Date.now(); // Reset start time
+                this.showQuestion();
+            }
+
+            showQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                
+                // Update question info
+                document.getElementById('questionType').textContent = question.typeLabel;
+                document.getElementById('questionNumber').textContent = `Câu ${this.currentQuestionIndex + 1}/${this.questions.length}`;
+                
+                // Update question content
+                const questionContent = document.getElementById('questionContent');
+                questionContent.innerHTML = `
+                    <div class="question-text">${question.questionText}</div>
+                    ${question.questionSubtext ? `<div class="question-subtext">${question.questionSubtext}</div>` : ''}
+                `;
+
+                // Show/hide audio controls
+                const audioControls = document.getElementById('audioControls');
+                if (question.isAudio) {
+                    audioControls.style.display = 'flex';
+                } else {
+                    audioControls.style.display = 'none';
+                }
+
+                // Generate answer options
+                this.showAnswerOptions(question);
+                
+                // Reset UI state
+                this.selectedAnswer = null;
+                document.getElementById('submitBtn').disabled = true;
+                this.updateProgress();
+            }
+
+            showAnswerOptions(question) {
+                const answerSection = document.getElementById('answerSection');
+                
+                answerSection.innerHTML = question.options.map((option, index) => `
+                    <div class="answer-option" onclick="selectAnswer('${option.replace(/'/g, "\\'")}', ${index})">
+                        <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `).join('');
+            }
+
+            selectAnswer(answer, index) {
+                // Remove previous selection
+                document.querySelectorAll('.answer-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+
+                // Mark new selection
+                document.querySelectorAll('.answer-option')[index].classList.add('selected');
+                
+                this.selectedAnswer = answer;
+                document.getElementById('submitBtn').disabled = false;
+            }
+
+            submitAnswer() {
+                if (!this.selectedAnswer) return;
+
+                const question = this.questions[this.currentQuestionIndex];
+                question.userAnswer = this.selectedAnswer;
+                question.isCorrect = this.selectedAnswer === question.correctAnswer;
+
+                // Store for API submission
+                this.answers.push({
+                    word_id: question.word_id,
+                    question_type: question.type,
+                    user_answer: this.selectedAnswer,
+                    correct_answer: question.correctAnswer,
+                    is_correct: question.isCorrect
+                });
+
+                // Update score
+                if (question.isCorrect) {
+                    this.correctCount++;
+                    this.score += 10;
+                }
+
+                // Show feedback
+                this.showAnswerFeedback(question);
+
+                // Update stats
+                this.updateStats();
+
+                // Auto advance after 2 seconds
+                setTimeout(() => {
+                    this.nextQuestion();
+                }, 2000);
+            }
+
+            showAnswerFeedback(question) {
+                const options = document.querySelectorAll('.answer-option');
+                
+                options.forEach((option, index) => {
+                    const optionText = option.querySelector('.option-text').textContent;
+                    
+                    if (optionText === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (optionText === question.userAnswer && !question.isCorrect) {
+                        option.classList.add('wrong');
+                    }
+                    
+                    option.style.pointerEvents = 'none';
+                });
+
+                // Disable submit button
+                document.getElementById('submitBtn').disabled = true;
+            }
+
+            nextQuestion() {
+                if (this.currentQuestionIndex < this.questions.length - 1) {
+                    this.currentQuestionIndex++;
+                    this.showQuestion();
+                } else {
+                    this.showResults();
+                }
+            }
+
+            skipQuestion() {
+                // Add empty answer for skipped question
+                const question = this.questions[this.currentQuestionIndex];
+                this.answers.push({
+                    word_id: question.word_id,
+                    question_type: question.type,
+                    user_answer: null,
+                    correct_answer: question.correctAnswer,
+                    is_correct: false
+                });
+                
+                this.nextQuestion();
+            }
+
+            updateProgress() {
+                const current = this.currentQuestionIndex + 1;
+                const total = this.questions.length;
+                const percentage = Math.round((current / total) * 100);
+                
+                document.getElementById('currentQuestion').textContent = current;
+                document.getElementById('progressFill').style.width = `${percentage}%`;
+                document.getElementById('progressText').textContent = `${percentage}%`;
+            }
+
+            updateStats() {
+                document.getElementById('correctCount').textContent = this.correctCount;
+                document.getElementById('currentScore').textContent = this.score;
+            }
+
+            showResults() {
+                const timeSpent = Math.round((Date.now() - this.startTime) / 60000); // minutes
+                const percentage = Math.round((this.correctCount / this.questions.length) * 100);
+                
+                // Submit quiz results to API
+                this.submitQuizToAPI(timeSpent);
+                
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('quizResults').style.display = 'block';
+
+                // Update results stats
+                document.getElementById('finalScore').textContent = this.score;
+                document.getElementById('finalCorrect').textContent = this.correctCount;
+                document.getElementById('finalPercentage').textContent = `${percentage}%`;
+                document.getElementById('timeSpent').textContent = timeSpent;
+
+                // Update performance badge
+                this.updatePerformanceBadge(percentage);
+
+                // Show wrong answers if any
+                this.showWrongAnswers();
+            }
+
+            async submitQuizToAPI(timeSpent) {
+                try {
+                    const userId = this.getCurrentUserId();
+                    
+                    const response = await fetch('php/n5-lessons-api.php?action=submitQuiz', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            session_id: this.sessionId || Date.now(),
+                            user_id: userId,
+                            lesson_id: this.lessonId,
+                            answers: this.answers,
+                            time_spent: timeSpent * 60, // Convert to seconds
+                            score: this.score,
+                            correct_answers: this.correctCount,
+                            total_questions: this.questions.length
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        console.log('✅ Quiz results submitted successfully');
+                        console.log('📊 API Response:', result.data);
+                    } else {
+                        console.error('❌ Failed to submit quiz results:', result.error);
+                    }
+                } catch (error) {
+                    console.error('❌ Error submitting quiz results:', error);
+                }
+            }
+
+            updatePerformanceBadge(percentage) {
+                const badgeElement = document.getElementById('performanceBadge');
+                const iconElement = badgeElement.querySelector('.badge-icon');
+                const textElement = badgeElement.querySelector('.badge-text');
+                const resultsIcon = document.getElementById('resultsIcon');
+                const resultsTitle = document.getElementById('resultsTitle');
+                const resultsMessage = document.getElementById('resultsMessage');
+
+                if (percentage >= 90) {
+                    iconElement.textContent = '🏆';
+                    textElement.textContent = 'Xuất sắc!';
+                    badgeElement.className = 'performance-badge excellent';
+                    resultsIcon.textContent = '🎉';
+                    resultsTitle.textContent = 'Tuyệt vời!';
+                    resultsMessage.textContent = 'Bạn đã thành thạo từ vựng bài này';
+                } else if (percentage >= 70) {
+                    iconElement.textContent = '⭐';
+                    textElement.textContent = 'Tốt!';
+                    badgeElement.className = 'performance-badge good';
+                    resultsIcon.textContent = '👏';
+                    resultsTitle.textContent = 'Tốt lắm!';
+                    resultsMessage.textContent = 'Bạn đã hiểu khá tốt từ vựng bài này';
+                } else if (percentage >= 50) {
+                    iconElement.textContent = '👍';
+                    textElement.textContent = 'Ổn!';
+                    badgeElement.className = 'performance-badge okay';
+                    resultsIcon.textContent = '😊';
+                    resultsTitle.textContent = 'Không tệ!';
+                    resultsMessage.textContent = 'Bạn cần ôn tập thêm một chút';
+                } else {
+                    iconElement.textContent = '💪';
+                    textElement.textContent = 'Cố gắng!';
+                    badgeElement.className = 'performance-badge needs-work';
+                    resultsIcon.textContent = '📚';
+                    resultsTitle.textContent = 'Hãy cố gắng!';
+                    resultsMessage.textContent = 'Bạn nên học lại từ vựng trước khi làm quiz';
+                }
+            }
+
+            showWrongAnswers() {
+                const wrongQuestions = this.questions.filter(q => !q.isCorrect && q.userAnswer);
+                
+                if (wrongQuestions.length > 0) {
+                    document.getElementById('wrongAnswers').style.display = 'block';
+                    
+                    const wrongList = document.getElementById('wrongList');
+                    wrongList.innerHTML = wrongQuestions.map(q => `
+                        <div class="wrong-item">
+                            <div class="wrong-question">${q.questionText}</div>
+                            <div class="wrong-details">
+                                <span class="your-answer">Bạn chọn: <strong>${q.userAnswer}</strong></span>
+                                <span class="correct-answer">Đáp án đúng: <strong>${q.correctAnswer}</strong></span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            playAudio() {
+                const question = this.questions[this.currentQuestionIndex];
+                console.log(`🔊 Playing audio for: ${question.audioText}`);
+                
+                // Visual feedback
+                const audioBtn = document.querySelector('.audio-btn');
+                audioBtn.textContent = '🔊 Đang phát...';
+                
+                setTimeout(() => {
+                    audioBtn.textContent = '🔊 Nghe lại';
+                }, 1500);
+                
+                // TODO: Implement actual audio playback
+                // For now, just show visual feedback
+            }
+
+            setupKeyboardListeners() {
+                document.addEventListener('keydown', (e) => {
+                    // Number keys 1-4 for answer selection
+                    if (e.key >= '1' && e.key <= '4') {
+                        const optionIndex = parseInt(e.key) - 1;
+                        const options = document.querySelectorAll('.answer-option');
+                        if (options[optionIndex]) {
+                            const optionText = options[optionIndex].querySelector('.option-text').textContent;
+                            this.selectAnswer(optionText, optionIndex);
+                        }
+                    }
+                    
+                    // Enter to submit
+                    if (e.key === 'Enter' && !document.getElementById('submitBtn').disabled) {
+                        this.submitAnswer();
+                    }
+                    
+                    // Space to skip
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                        this.skipQuestion();
+                    }
+                });
+            }
+
+            hideLoading() {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+
+            showError(message) {
+                document.body.innerHTML = `
+                    <div class="container mt-5 text-center">
+                        <h2>❌ Lỗi</h2>
+                        <p>${message}</p>
+                        <a href="vocabulary-lessons.html" class="btn btn-primary">← Về danh sách bài học</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Global functions
+        function startQuiz() {
+            window.quizApp.startQuiz();
+        }
+
+        function selectAnswer(answer, index) {
+            window.quizApp.selectAnswer(answer, index);
+        }
+
+        function submitAnswer() {
+            window.quizApp.submitAnswer();
+        }
+
+        function skipQuestion() {
+            window.quizApp.skipQuestion();
+        }
+
+        function playAudio() {
+            window.quizApp.playAudio();
+        }
+
+        function goBack() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-detail.html?lesson=${lessonId}`;
+        }
+
+        function retakeQuiz() {
+            window.location.reload();
+        }
+
+        function goToStudy() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-study.html?lesson=${lessonId}`;
+        }
+
+        function goToLessonList() {
+            window.location.href = 'vocabulary-lessons.html';
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.quizApp = new LessonQuizPage();
+        });
+    </script>{ japanese: "せんせい", romaji: "sensei", meaning: "giáo viên", type: "danh từ" },
+                        { japanese: "にほんじん", romaji: "nihonjin", meaning: "người Nhật", type: "danh từ" },
+                        { japanese: "アメリカじん", romaji: "amerikajin", meaning: "người Mỹ", type: "danh từ" },
+                        { japanese: "はじめまして", romaji: "hajimemashite", meaning: "rất vui được gặp", type: "chào hỏi" },
+                        { japanese: "よろしく", romaji: "yoroshiku", meaning: "xin chào (khi gặp lần đầu)", type: "chào hỏi" },
+                        { japanese: "こんにちは", romaji: "konnichiwa", meaning: "xin chào (buổi trưa)", type: "chào hỏi" },
+                        { japanese: "さようなら", romaji: "sayounara", meaning: "tạm biệt", type: "chào hỏi" }
+                    ],
+                    2: [
+                        { japanese: "これ", romaji: "kore", meaning: "cái này", type: "đại từ chỉ định" },
+                        { japanese: "それ", romaji: "sore", meaning: "cái đó", type: "đại từ chỉ định" },
+                        { japanese: "あれ", romaji: "are", meaning: "cái kia", type: "đại từ chỉ định" },
+                        { japanese: "この", romaji: "kono", meaning: "cái này (+ danh từ)", type: "đại từ chỉ định" },
+                        { japanese: "その", romaji: "sono", meaning: "cái đó (+ danh từ)", type: "đại từ chỉ định" },
+                        { japanese: "あの", romaji: "ano", meaning: "cái kia (+ danh từ)", type: "đại từ chỉ định" }
+                    ]
+                };
+
+                const vocabulary = vocabularyByLesson[this.lessonId] || [
+                    { japanese: "たんご", romaji: "tango", meaning: "từ vựng", type: "danh từ" },
+                    { japanese: "べんきょう", romaji: "benkyou", meaning: "học tập", type: "danh từ" }
+                ];
+
+                this.questions = this.generateQuestions(vocabulary);
+                this.updateLessonInfo();
+                this.showStartScreen();
+                this.hideLoading();
+            }
+
+            generateQuestions(vocabulary) {
+                const questions = [];
+                const questionTypes = ['jp_to_vn', 'vn_to_jp', 'romaji_to_jp', 'audio'];
+
+                // Generate 10 questions
+                for (let i = 0; i < Math.min(10, vocabulary.length * 2); i++) {
+                    const word = vocabulary[i % vocabulary.length];
+                    const questionType = questionTypes[i % questionTypes.length];
+                    
+                    let question = this.createQuestion(word, questionType, vocabulary);
+                    if (question) {
+                        questions.push(question);
+                    }
+                }
+
+                return questions.slice(0, 10); // Limit to 10 questions
+            }
+
+            createQuestion(word, type, allVocabulary) {
+                const question = {
+                    id: Date.now() + Math.random(),
+                    type: type,
+                    word: word,
+                    correctAnswer: null,
+                    options: [],
+                    userAnswer: null,
+                    isCorrect: false
+                };
+
+                switch (type) {
+                    case 'jp_to_vn':
+                        question.questionText = word.japanese;
+                        question.questionSubtext = `(${word.romaji})`;
+                        question.correctAnswer = word.meaning;
+                        question.options = this.generateOptions(word.meaning, allVocabulary.map(v => v.meaning));
+                        question.typeLabel = 'Chọn nghĩa đúng';
+                        break;
+
+                    case 'vn_to_jp':
+                        question.questionText = word.meaning;
+                        question.correctAnswer = word.japanese;
+                        question.options = this.generateOptions(word.japanese, allVocabulary.map(v => v.japanese));
+                        question.typeLabel = 'Chọn từ tiếng Nhật đúng';
+                        break;
+
+                    case 'romaji_to_jp':
+                        question.questionText = word.romaji;
+                        question.questionSubtext = `Nghĩa: ${word.meaning}`;
+                        question.correctAnswer = word.japanese;
+                        question.options = this.generateOptions(word.japanese, allVocabulary.map(v => v.japanese));
+                        question.typeLabel = 'Chọn cách viết Hiragana/Katakana đúng';
+                        break;
+
+                    case 'audio':
+                        question.questionText = '🔊 Nghe và chọn từ đúng';
+                        question.audioText = word.japanese; // In real app, this would be audio file
+                        question.correctAnswer = word.meaning;
+                        question.options = this.generateOptions(word.meaning, allVocabulary.map(v => v.meaning));
+                        question.typeLabel = 'Câu hỏi nghe';
+                        question.isAudio = true;
+                        break;
+                }
+
+                return question;
+            }
+
+            generateOptions(correctAnswer, allOptions) {
+                // Get 3 random wrong options
+                const wrongOptions = allOptions
+                    .filter(option => option !== correctAnswer)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+
+                // Combine with correct answer and shuffle
+                const options = [correctAnswer, ...wrongOptions]
+                    .sort(() => Math.random() - 0.5);
+
+                return options;
+            }
+
+            updateLessonInfo() {
+                document.getElementById('lessonNumber').textContent = this.lessonId;
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+                
+                // Get lesson titles
+                const lessonTitles = {
+                    1: { title: "Quiz: Giới thiệu bản thân", titleJp: "第1課：自己紹介" },
+                    2: { title: "Quiz: Đại từ chỉ định", titleJp: "第2課：指示詞" },
+                    3: { title: "Quiz: Đại từ chỉ phương hướng", titleJp: "第3課：方向詞" },
+                };
+
+                const lessonInfo = lessonTitles[this.lessonId] || { 
+                    title: `Quiz: Bài ${this.lessonId}`, 
+                    titleJp: `第${this.lessonId}課` 
+                };
+
+                document.getElementById('lessonTitle').textContent = lessonInfo.title;
+                document.getElementById('lessonTitleJp').textContent = lessonInfo.titleJp;
+            }
+
+            showStartScreen() {
+                document.getElementById('quizStart').style.display = 'block';
+            }
+
+            startQuiz() {
+                document.getElementById('quizStart').style.display = 'none';
+                document.getElementById('quizContainer').style.display = 'block';
+                this.showQuestion();
+            }
+
+            showQuestion() {
+                const question = this.questions[this.currentQuestionIndex];
+                
+                // Update question info
+                document.getElementById('questionType').textContent = question.typeLabel;
+                document.getElementById('questionNumber').textContent = `Câu ${this.currentQuestionIndex + 1}/${this.questions.length}`;
+                
+                // Update question content
+                const questionContent = document.getElementById('questionContent');
+                questionContent.innerHTML = `
+                    <div class="question-text">${question.questionText}</div>
+                    ${question.questionSubtext ? `<div class="question-subtext">${question.questionSubtext}</div>` : ''}
+                `;
+
+                // Show/hide audio controls
+                const audioControls = document.getElementById('audioControls');
+                if (question.isAudio) {
+                    audioControls.style.display = 'flex';
+                } else {
+                    audioControls.style.display = 'none';
+                }
+
+                // Generate answer options
+                this.showAnswerOptions(question);
+                
+                // Reset UI state
+                this.selectedAnswer = null;
+                document.getElementById('submitBtn').disabled = true;
+                this.updateProgress();
+            }
+
+            showAnswerOptions(question) {
+                const answerSection = document.getElementById('answerSection');
+                
+                answerSection.innerHTML = question.options.map((option, index) => `
+                    <div class="answer-option" onclick="selectAnswer('${option}', ${index})">
+                        <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `).join('');
+            }
+
+            selectAnswer(answer, index) {
+                // Remove previous selection
+                document.querySelectorAll('.answer-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+
+                // Mark new selection
+                document.querySelectorAll('.answer-option')[index].classList.add('selected');
+                
+                this.selectedAnswer = answer;
+                document.getElementById('submitBtn').disabled = false;
+            }
+
+            submitAnswer() {
+                if (!this.selectedAnswer) return;
+
+                const question = this.questions[this.currentQuestionIndex];
+                question.userAnswer = this.selectedAnswer;
+                question.isCorrect = this.selectedAnswer === question.correctAnswer;
+
+                // Update score
+                if (question.isCorrect) {
+                    this.correctCount++;
+                    this.score += 10;
+                }
+
+                // Show feedback
+                this.showAnswerFeedback(question);
+
+                // Update stats
+                this.updateStats();
+
+                // Auto advance after 2 seconds
+                setTimeout(() => {
+                    this.nextQuestion();
+                }, 2000);
+            }
+
+            showAnswerFeedback(question) {
+                const options = document.querySelectorAll('.answer-option');
+                
+                options.forEach((option, index) => {
+                    const optionText = option.querySelector('.option-text').textContent;
+                    
+                    if (optionText === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (optionText === question.userAnswer && !question.isCorrect) {
+                        option.classList.add('wrong');
+                    }
+                    
+                    option.style.pointerEvents = 'none';
+                });
+
+                // Disable submit button
+                document.getElementById('submitBtn').disabled = true;
+            }
+
+            nextQuestion() {
+                if (this.currentQuestionIndex < this.questions.length - 1) {
+                    this.currentQuestionIndex++;
+                    this.showQuestion();
+                } else {
+                    this.showResults();
+                }
+            }
+
+            skipQuestion() {
+                this.nextQuestion();
+            }
+
+            updateProgress() {
+                const current = this.currentQuestionIndex + 1;
+                const total = this.questions.length;
+                const percentage = Math.round((current / total) * 100);
+                
+                document.getElementById('currentQuestion').textContent = current;
+                document.getElementById('progressFill').style.width = `${percentage}%`;
+                document.getElementById('progressText').textContent = `${percentage}%`;
+            }
+
+            updateStats() {
+                document.getElementById('correctCount').textContent = this.correctCount;
+                document.getElementById('currentScore').textContent = this.score;
+            }
+
+            showResults() {
+                const timeSpent = Math.round((Date.now() - this.startTime) / 60000); // minutes
+                const percentage = Math.round((this.correctCount / this.questions.length) * 100);
+                
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('quizResults').style.display = 'block';
+
+                // Update results stats
+                document.getElementById('finalScore').textContent = this.score;
+                document.getElementById('finalCorrect').textContent = this.correctCount;
+                document.getElementById('finalPercentage').textContent = `${percentage}%`;
+                document.getElementById('timeSpent').textContent = timeSpent;
+
+                // Update performance badge
+                this.updatePerformanceBadge(percentage);
+
+                // Show wrong answers if any
+                this.showWrongAnswers();
+            }
+
+            updatePerformanceBadge(percentage) {
+                const badgeElement = document.getElementById('performanceBadge');
+                const iconElement = badgeElement.querySelector('.badge-icon');
+                const textElement = badgeElement.querySelector('.badge-text');
+                const resultsIcon = document.getElementById('resultsIcon');
+                const resultsTitle = document.getElementById('resultsTitle');
+                const resultsMessage = document.getElementById('resultsMessage');
+
+                if (percentage >= 90) {
+                    iconElement.textContent = '🏆';
+                    textElement.textContent = 'Xuất sắc!';
+                    badgeElement.className = 'performance-badge excellent';
+                    resultsIcon.textContent = '🎉';
+                    resultsTitle.textContent = 'Tuyệt vời!';
+                    resultsMessage.textContent = 'Bạn đã thành thạo từ vựng bài này';
+                } else if (percentage >= 70) {
+                    iconElement.textContent = '⭐';
+                    textElement.textContent = 'Tốt!';
+                    badgeElement.className = 'performance-badge good';
+                    resultsIcon.textContent = '👏';
+                    resultsTitle.textContent = 'Tốt lắm!';
+                    resultsMessage.textContent = 'Bạn đã hiểu khá tốt từ vựng bài này';
+                } else if (percentage >= 50) {
+                    iconElement.textContent = '👍';
+                    textElement.textContent = 'Ổn!';
+                    badgeElement.className = 'performance-badge okay';
+                    resultsIcon.textContent = '😊';
+                    resultsTitle.textContent = 'Không tệ!';
+                    resultsMessage.textContent = 'Bạn cần ôn tập thêm một chút';
+                } else {
+                    iconElement.textContent = '💪';
+                    textElement.textContent = 'Cố gắng!';
+                    badgeElement.className = 'performance-badge needs-work';
+                    resultsIcon.textContent = '📚';
+                    resultsTitle.textContent = 'Hãy cố gắng!';
+                    resultsMessage.textContent = 'Bạn nên học lại từ vựng trước khi làm quiz';
+                }
+            }
+
+            showWrongAnswers() {
+                const wrongQuestions = this.questions.filter(q => !q.isCorrect && q.userAnswer);
+                
+                if (wrongQuestions.length > 0) {
+                    document.getElementById('wrongAnswers').style.display = 'block';
+                    
+                    const wrongList = document.getElementById('wrongList');
+                    wrongList.innerHTML = wrongQuestions.map(q => `
+                        <div class="wrong-item">
+                            <div class="wrong-question">${q.questionText}</div>
+                            <div class="wrong-details">
+                                <span class="your-answer">Bạn chọn: <strong>${q.userAnswer}</strong></span>
+                                <span class="correct-answer">Đáp án đúng: <strong>${q.correctAnswer}</strong></span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            playAudio() {
+                const question = this.questions[this.currentQuestionIndex];
+                console.log(`🔊 Playing audio for: ${question.audioText}`);
+                
+                // Visual feedback
+                const audioBtn = document.querySelector('.audio-btn');
+                audioBtn.textContent = '🔊 Đang phát...';
+                
+                setTimeout(() => {
+                    audioBtn.textContent = '🔊 Nghe lại';
+                }, 1500);
+                
+                // TODO: Implement actual audio playback
+            }
+
+            setupKeyboardListeners() {
+                document.addEventListener('keydown', (e) => {
+                    // Number keys 1-4 for answer selection
+                    if (e.key >= '1' && e.key <= '4') {
+                        const optionIndex = parseInt(e.key) - 1;
+                        const options = document.querySelectorAll('.answer-option');
+                        if (options[optionIndex]) {
+                            const optionText = options[optionIndex].querySelector('.option-text').textContent;
+                            this.selectAnswer(optionText, optionIndex);
+                        }
+                    }
+                    
+                    // Enter to submit
+                    if (e.key === 'Enter' && !document.getElementById('submitBtn').disabled) {
+                        this.submitAnswer();
+                    }
+                    
+                    // Space to skip
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                        this.skipQuestion();
+                    }
+                });
+            }
+
+            hideLoading() {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+
+            showError(message) {
+                document.body.innerHTML = `
+                    <div class="container mt-5 text-center">
+                        <h2>❌ Lỗi</h2>
+                        <p>${message}</p>
+                        <a href="vocabulary-lessons.html" class="btn btn-primary">← Về danh sách bài học</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Global functions
+        function startQuiz() {
+            window.quizApp.startQuiz();
+        }
+
+        function selectAnswer(answer, index) {
+            window.quizApp.selectAnswer(answer, index);
+        }
+
+        function submitAnswer() {
+            window.quizApp.submitAnswer();
+        }
+
+        function skipQuestion() {
+            window.quizApp.skipQuestion();
+        }
+
+        function playAudio() {
+            window.quizApp.playAudio();
+        }
+
+        function goBack() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-detail.html?lesson=${lessonId}`;
+        }
+
+        function retakeQuiz() {
+            window.location.reload();
+        }
+
+        function goToStudy() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-study.html?lesson=${lessonId}`;
+        }
+
+        function goToLessonList() {
+            window.location.href = 'vocabulary-lessons.html';
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.quizApp = new LessonQuizPage();
+        });
+    </script>
+</body>
+
+</html>

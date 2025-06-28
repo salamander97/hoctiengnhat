@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Học theo bài Minna no Nihongo - 50 bài N5</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/vocabulary-lessons.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="lessons-header">
+        <a href="vocabulary-n5.html" class="back-button">← Về từ vựng N5</a>
+        <div class="container">
+            <div class="header-content">
+                <h1>📖 Học theo bài Minna no Nihongo</h1>
+                <p>50 bài học từ vựng N5 - Tự do chọn bài học theo sở thích</p>
+
+                <!-- Overall Stats -->
+                <div class="overall-progress">
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">50</span>
+                            <span class="stat-label">Bài học</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">📚</span>
+                            <span class="stat-label">Ngữ pháp N5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">🎯</span>
+                            <span class="stat-label">Học tự do</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">🌟</span>
+                            <span class="stat-label">Hiệu quả</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <!-- Search -->
+        <div class="lessons-controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm bài học..." class="form-control">
+            </div>
+        </div>
+
+        <!-- Lessons Grid -->
+        <div class="lessons-content">
+            
+            <!-- Group 1: Cơ bản (1-10) -->
+            <div class="lesson-group">
+                <div class="group-header">
+                    <h2>🌱 Nhóm 1: Cơ bản (Bài 1-10)</h2>
+                </div>
+                <div class="lessons-grid">
+                    
+                    <!-- Bài 1 -->
+                    <div class="lesson-card" onclick="openLesson(1)">
+                        <div class="lesson-number">1</div>
+                        <div class="lesson-icon">🙋‍♂️</div>
+                        <div class="lesson-title">Giới thiệu bản thân</div>
+                        <div class="lesson-title-jp">第1課：自己紹介</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 2 -->
+                    <div class="lesson-card" onclick="openLesson(2)">
+                        <div class="lesson-number">2</div>
+                        <div class="lesson-icon">👉</div>
+                        <div class="lesson-title">Đại từ chỉ định</div>
+                        <div class="lesson-title-jp">第2課：指示詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 3 -->
+                    <div class="lesson-card" onclick="openLesson(3)">
+                        <div class="lesson-number">3</div>
+                        <div class="lesson-icon">🧭</div>
+                        <div class="lesson-title">Đại từ chỉ phương hướng</div>
+                        <div class="lesson-title-jp">第3課：方向詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 4 -->
+                    <div class="lesson-card" onclick="openLesson(4)">
+                        <div class="lesson-number">4</div>
+                        <div class="lesson-icon">🕐</div>
+                        <div class="lesson-title">Cách nói về thời gian</div>
+                        <div class="lesson-title-jp">第4課：時間の表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 5 -->
+                    <div class="lesson-card" onclick="openLesson(5)">
+                        <div class="lesson-number">5</div>
+                        <div class="lesson-icon">🚶‍♂️</div>
+                        <div class="lesson-title">Động từ chỉ sự di chuyển</div>
+                        <div class="lesson-title-jp">第5課：移動動詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 6 -->
+                    <div class="lesson-card" onclick="openLesson(6)">
+                        <div class="lesson-number">6</div>
+                        <div class="lesson-icon">🎯</div>
+                        <div class="lesson-title">Ngoại động từ "だとうし"</div>
+                        <div class="lesson-title-jp">第6課：他動詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 7 -->
+                    <div class="lesson-card" onclick="openLesson(7)">
+                        <div class="lesson-number">7</div>
+                        <div class="lesson-icon">🎁</div>
+                        <div class="lesson-title">Cách nói Cho - Nhận</div>
+                        <div class="lesson-title-jp">第7課：授受動詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 8 -->
+                    <div class="lesson-card" onclick="openLesson(8)">
+                        <div class="lesson-number">8</div>
+                        <div class="lesson-icon">✨</div>
+                        <div class="lesson-title">Tính từ</div>
+                        <div class="lesson-title-jp">第8課：形容詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 9 -->
+                    <div class="lesson-card" onclick="openLesson(9)">
+                        <div class="lesson-number">9</div>
+                        <div class="lesson-icon">❤️</div>
+                        <div class="lesson-title">Sở thích - Năng lực</div>
+                        <div class="lesson-title-jp">第9課：好き・能力</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 10 -->
+                    <div class="lesson-card" onclick="openLesson(10)">
+                        <div class="lesson-number">10</div>
+                        <div class="lesson-icon">📍</div>
+                        <div class="lesson-title">Cách nói sự tồn tại của người, sự vật</div>
+                        <div class="lesson-title-jp">第10課：存在表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Group 2: Trung cấp (11-20) -->
+            <div class="lesson-group">
+                <div class="group-header">
+                    <h2>🌿 Nhóm 2: Trung cấp (Bài 11-20)</h2>
+                </div>
+                <div class="lessons-grid">
+                    
+                    <!-- Bài 11 -->
+                    <div class="lesson-card" onclick="openLesson(11)">
+                        <div class="lesson-number">11</div>
+                        <div class="lesson-icon">🔢</div>
+                        <div class="lesson-title">Lượng từ tiếng Nhật</div>
+                        <div class="lesson-title-jp">第11課：助数詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 12 -->
+                    <div class="lesson-card" onclick="openLesson(12)">
+                        <div class="lesson-number">12</div>
+                        <div class="lesson-icon">⏰</div>
+                        <div class="lesson-title">Tính từ trong quá khứ</div>
+                        <div class="lesson-title-jp">第12課：形容詞の過去形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 13 -->
+                    <div class="lesson-card" onclick="openLesson(13)">
+                        <div class="lesson-number">13</div>
+                        <div class="lesson-icon">💭</div>
+                        <div class="lesson-title">Mong muốn cái gì, làm cái gì?</div>
+                        <div class="lesson-title-jp">第13課：願望表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 14 -->
+                    <div class="lesson-card" onclick="openLesson(14)">
+                        <div class="lesson-number">14</div>
+                        <div class="lesson-icon">🔗</div>
+                        <div class="lesson-title">Động từ thể "て"</div>
+                        <div class="lesson-title-jp">第14課：て形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 15 -->
+                    <div class="lesson-card" onclick="openLesson(15)">
+                        <div class="lesson-number">15</div>
+                        <div class="lesson-icon">✅</div>
+                        <div class="lesson-title">Mẫu câu được, không được làm gì</div>
+                        <div class="lesson-title-jp">第15課：許可・禁止</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 16 -->
+                    <div class="lesson-card" onclick="openLesson(16)">
+                        <div class="lesson-number">16</div>
+                        <div class="lesson-icon">🔄</div>
+                        <div class="lesson-title">Cách sử dụng động từ thể "て"</div>
+                        <div class="lesson-title-jp">第16課：て形の使い方</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 17 -->
+                    <div class="lesson-card" onclick="openLesson(17)">
+                        <div class="lesson-number">17</div>
+                        <div class="lesson-icon">❌</div>
+                        <div class="lesson-title">Thể "ない"</div>
+                        <div class="lesson-title-jp">第17課：ない形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 18 -->
+                    <div class="lesson-card" onclick="openLesson(18)">
+                        <div class="lesson-number">18</div>
+                        <div class="lesson-icon">💪</div>
+                        <div class="lesson-title">Động từ khả năng</div>
+                        <div class="lesson-title-jp">第18課：可能動詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 19 -->
+                    <div class="lesson-card" onclick="openLesson(19)">
+                        <div class="lesson-number">19</div>
+                        <div class="lesson-icon">📅</div>
+                        <div class="lesson-title">Thể "た"</div>
+                        <div class="lesson-title-jp">第19課：た形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 20 -->
+                    <div class="lesson-card" onclick="openLesson(20)">
+                        <div class="lesson-number">20</div>
+                        <div class="lesson-icon">👔</div>
+                        <div class="lesson-title">Thể thông thường và thể lịch sự</div>
+                        <div class="lesson-title-jp">第20課：普通体・丁寧体</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Group 3: Nâng cao (21-30) -->
+            <div class="lesson-group">
+                <div class="group-header">
+                    <h2>🌸 Nhóm 3: Nâng cao (Bài 21-30)</h2>
+                </div>
+                <div class="lessons-grid">
+                    
+                    <!-- Bài 21 -->
+                    <div class="lesson-card" onclick="openLesson(21)">
+                        <div class="lesson-number">21</div>
+                        <div class="lesson-icon">💭</div>
+                        <div class="lesson-title">Mẫu câu nêu lên quan điểm, suy nghĩ</div>
+                        <div class="lesson-title-jp">第21課：意見・考え</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 22 -->
+                    <div class="lesson-card" onclick="openLesson(22)">
+                        <div class="lesson-number">22</div>
+                        <div class="lesson-icon">🏷️</div>
+                        <div class="lesson-title">Định ngữ</div>
+                        <div class="lesson-title-jp">第22課：修飾語</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 23 -->
+                    <div class="lesson-card" onclick="openLesson(23)">
+                        <div class="lesson-number">23</div>
+                        <div class="lesson-icon">⏰</div>
+                        <div class="lesson-title">Khi ~, lúc ~</div>
+                        <div class="lesson-title-jp">第23課：時間表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 24 -->
+                    <div class="lesson-card" onclick="openLesson(24)">
+                        <div class="lesson-number">24</div>
+                        <div class="lesson-icon">🎁</div>
+                        <div class="lesson-title">Mẫu câu cho, tặng</div>
+                        <div class="lesson-title-jp">第24課：授受表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 25 -->
+                    <div class="lesson-card" onclick="openLesson(25)">
+                        <div class="lesson-number">25</div>
+                        <div class="lesson-icon">🤔</div>
+                        <div class="lesson-title">Mẫu câu giả định, giả sử</div>
+                        <div class="lesson-title-jp">第25課：仮定表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 26 -->
+                    <div class="lesson-card" onclick="openLesson(26)">
+                        <div class="lesson-number">26</div>
+                        <div class="lesson-icon">💡</div>
+                        <div class="lesson-title">Cách hình thành và sử dụng thể "んです"</div>
+                        <div class="lesson-title-jp">第26課：んです</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 27 -->
+                    <div class="lesson-card" onclick="openLesson(27)">
+                        <div class="lesson-number">27</div>
+                        <div class="lesson-icon">🔧</div>
+                        <div class="lesson-title">Động từ thể khả năng</div>
+                        <div class="lesson-title-jp">第27課：可能形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 28 -->
+                    <div class="lesson-card" onclick="openLesson(28)">
+                        <div class="lesson-number">28</div>
+                        <div class="lesson-icon">⚡</div>
+                        <div class="lesson-title">Diễn tả 2 hành động xảy ra song song, cùng lúc</div>
+                        <div class="lesson-title-jp">第28課：同時動作</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 29 -->
+                    <div class="lesson-card" onclick="openLesson(29)">
+                        <div class="lesson-number">29</div>
+                        <div class="lesson-icon">📦</div>
+                        <div class="lesson-title">Diễn tả trạng thái đồ vật</div>
+                        <div class="lesson-title-jp">第29課：物の状態</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 30 -->
+                    <div class="lesson-card" onclick="openLesson(30)">
+                        <div class="lesson-number">30</div>
+                        <div class="lesson-icon">🎯</div>
+                        <div class="lesson-title">Cách diễn tả trạng thái hoặc kết quả của 1 hành động</div>
+                        <div class="lesson-title-jp">第30課：結果状態</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Group 4: Chuyên sâu (31-40) -->
+            <div class="lesson-group">
+                <div class="group-header">
+                    <h2>🌺 Nhóm 4: Chuyên sâu (Bài 31-40)</h2>
+                </div>
+                <div class="lessons-grid">
+                    
+                    <!-- Bài 31 -->
+                    <div class="lesson-card" onclick="openLesson(31)">
+                        <div class="lesson-number">31</div>
+                        <div class="lesson-icon">🎯</div>
+                        <div class="lesson-title">Động từ thể ý chí</div>
+                        <div class="lesson-title-jp">第31課：意志形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 32 -->
+                    <div class="lesson-card" onclick="openLesson(32)">
+                        <div class="lesson-number">32</div>
+                        <div class="lesson-icon">💡</div>
+                        <div class="lesson-title">Cách nói diễn tả lời khuyên và khả năng có..</div>
+                        <div class="lesson-title-jp">第32課：アドバイス・可能性</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 33 -->
+                    <div class="lesson-card" onclick="openLesson(33)">
+                        <div class="lesson-number">33</div>
+                        <div class="lesson-icon">⚠️</div>
+                        <div class="lesson-title">Thể mệnh lệnh, cấm đoán</div>
+                        <div class="lesson-title-jp">第33課：命令・禁止</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 34 -->
+                    <div class="lesson-card" onclick="openLesson(34)">
+                        <div class="lesson-number">34</div>
+                        <div class="lesson-icon">📋</div>
+                        <div class="lesson-title">Cách nói "theo như", tuần tự của hành động</div>
+                        <div class="lesson-title-jp">第34課：順序・手順</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 35 -->
+                    <div class="lesson-card" onclick="openLesson(35)">
+                        <div class="lesson-number">35</div>
+                        <div class="lesson-icon">🔀</div>
+                        <div class="lesson-title">Thể điều kiện</div>
+                        <div class="lesson-title-jp">第35課：条件形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 36 -->
+                    <div class="lesson-card" onclick="openLesson(36)">
+                        <div class="lesson-number">36</div>
+                        <div class="lesson-icon">🎬</div>
+                        <div class="lesson-title">Mẫu câu biểu hiện một hành động nào đó...</div>
+                        <div class="lesson-title-jp">第36課：動作表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 37 -->
+                    <div class="lesson-card" onclick="openLesson(37)">
+                        <div class="lesson-number">37</div>
+                        <div class="lesson-icon">🎭</div>
+                        <div class="lesson-title">Thể bị động</div>
+                        <div class="lesson-title-jp">第37課：受身形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 38 -->
+                    <div class="lesson-card" onclick="openLesson(38)">
+                        <div class="lesson-number">38</div>
+                        <div class="lesson-icon">🔄</div>
+                        <div class="lesson-title">Danh từ hoá động từ trong tiếng nhật</div>
+                        <div class="lesson-title-jp">第38課：動詞の名詞化</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 39 -->
+                    <div class="lesson-card" onclick="openLesson(39)">
+                        <div class="lesson-number">39</div>
+                        <div class="lesson-icon">🔗</div>
+                        <div class="lesson-title">Mẫu câu về nguyên nhân và kết quả</div>
+                        <div class="lesson-title-jp">第39課：原因・結果</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 40 -->
+                    <div class="lesson-card" onclick="openLesson(40)">
+                        <div class="lesson-number">40</div>
+                        <div class="lesson-icon">❓</div>
+                        <div class="lesson-title">Trợ từ nghi vấn</div>
+                        <div class="lesson-title-jp">第40課：疑問助詞</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Group 5: Tổng hợp (41-50) -->
+            <div class="lesson-group">
+                <div class="group-header">
+                    <h2>🌲 Nhóm 5: Tổng hợp (Bài 41-50)</h2>
+                </div>
+                <div class="lessons-grid">
+                    
+                    <!-- Bài 41 -->
+                    <div class="lesson-card" onclick="openLesson(41)">
+                        <div class="lesson-number">41</div>
+                        <div class="lesson-icon">💝</div>
+                        <div class="lesson-title">Cách nói Cho, Nhận trong tiếng Nhật</div>
+                        <div class="lesson-title-jp">第41課：授受の表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 42 -->
+                    <div class="lesson-card" onclick="openLesson(42)">
+                        <div class="lesson-number">42</div>
+                        <div class="lesson-icon">🎯</div>
+                        <div class="lesson-title">Cấu trúc thể hiện mục đích</div>
+                        <div class="lesson-title-jp">第42課：目的表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 43 -->
+                    <div class="lesson-card" onclick="openLesson(43)">
+                        <div class="lesson-number">43</div>
+                        <div class="lesson-icon">👀</div>
+                        <div class="lesson-title">Có vẻ như gì đó "そうです"</div>
+                        <div class="lesson-title-jp">第43課：そうです</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 44 -->
+                    <div class="lesson-card" onclick="openLesson(44)">
+                        <div class="lesson-number">44</div>
+                        <div class="lesson-icon">⚖️</div>
+                        <div class="lesson-title">Cách nói quá dễ hoặc quá khó để làm...</div>
+                        <div class="lesson-title-jp">第44課：すぎる表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 45 -->
+                    <div class="lesson-card" onclick="openLesson(45)">
+                        <div class="lesson-number">45</div>
+                        <div class="lesson-icon">😔</div>
+                        <div class="lesson-title">Ngữ pháp thể hiện sự tiếc nuối</div>
+                        <div class="lesson-title-jp">第45課：後悔表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 46 -->
+                    <div class="lesson-card" onclick="openLesson(46)">
+                        <div class="lesson-number">46</div>
+                        <div class="lesson-icon">⏱️</div>
+                        <div class="lesson-title">Thời điểm của hành động</div>
+                        <div class="lesson-title-jp">第46課：動作の時点</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 47 -->
+                    <div class="lesson-card" onclick="openLesson(47)">
+                        <div class="lesson-number">47</div>
+                        <div class="lesson-icon">👂</div>
+                        <div class="lesson-title">Cách nói nghe như thế này, nghe như thế kia</div>
+                        <div class="lesson-title-jp">第47課：伝聞表現</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 48 -->
+                    <div class="lesson-card" onclick="openLesson(48)">
+                        <div class="lesson-number">48</div>
+                        <div class="lesson-icon">👑</div>
+                        <div class="lesson-title">Thể sai khiến</div>
+                        <div class="lesson-title-jp">第48課：使役形</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 49 -->
+                    <div class="lesson-card" onclick="openLesson(49)">
+                        <div class="lesson-number">49</div>
+                        <div class="lesson-icon">🙏</div>
+                        <div class="lesson-title">Tôn kính ngữ "そんけいごー尊敬語"</div>
+                        <div class="lesson-title-jp">第49課：尊敬語</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                    <!-- Bài 50 -->
+                    <div class="lesson-card" onclick="openLesson(50)">
+                        <div class="lesson-number">50</div>
+                        <div class="lesson-icon">🤝</div>
+                        <div class="lesson-title">Khiêm nhường ngữ</div>
+                        <div class="lesson-title-jp">第50課：謙譲語</div>
+                        <div class="lesson-stats">
+                            <span class="lesson-difficulty">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const lessonCards = document.querySelectorAll('.lesson-card');
+            
+            lessonCards.forEach(card => {
+                const title = card.querySelector('.lesson-title').textContent.toLowerCase();
+                const titleJp = card.querySelector('.lesson-title-jp').textContent.toLowerCase();
+                const number = card.querySelector('.lesson-number').textContent;
+                
+                if (title.includes(searchTerm) || titleJp.includes(searchTerm) || number.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Open lesson function
+        function openLesson(lessonNumber) {
+            window.location.href = `vocabulary-lesson-detail.html?lesson=${lessonNumber}`;
+        }
+
+        // Add hover effects
+        document.querySelectorAll('.lesson-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+
+</html>

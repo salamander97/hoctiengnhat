@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Chi tiết bài học - Minna no Nihongo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/lesson-detail.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="lesson-header" id="lessonHeader">
+        <a href="vocabulary-lessons.html" class="back-button">← Về danh sách bài học</a>
+        <div class="container">
+            <div class="header-content">
+                <div class="lesson-number-big" id="lessonNumberBig">1</div>
+                <h1 id="lessonTitle">Giới thiệu bản thân</h1>
+                <p id="lessonTitleJp">第1課：自己紹介</p>
+                <div class="lesson-meta">
+                    <span class="lesson-difficulty" id="lessonDifficulty">⭐</span>
+                    <span class="lesson-group" id="lessonGroup">Nhóm 1: Cơ bản</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        
+        <!-- Loading State -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <h4>Đang tải nội dung bài học...</h4>
+        </div>
+
+        <!-- Lesson Options -->
+        <div class="lesson-options" id="lessonOptions" style="display: none;">
+            <h2>🎯 Chọn cách học</h2>
+            <p class="options-description">Bạn muốn học bài này như thế nào?</p>
+            
+            <div class="options-grid">
+                
+                <!-- Study Option -->
+                <div class="option-card study-card" onclick="startStudy()">
+                    <div class="option-icon">📚</div>
+                    <h3>Học từ vựng</h3>
+                    <p>Học từ vựng thông qua flashcard tương tác với hệ thống ghi nhớ thông minh</p>
+                    <div class="option-features">
+                        <div class="feature-item">✅ Flashcard hai mặt</div>
+                        <div class="feature-item">✅ Âm thanh phát âm</div>
+                        <div class="feature-item">✅ Ví dụ câu thực tế</div>
+                        <div class="feature-item">✅ Hệ thống ghi nhớ</div>
+                    </div>
+                    <div class="option-button study-button">
+                        🚀 Bắt đầu học
+                    </div>
+                </div>
+
+                <!-- Quiz Option -->
+                <div class="option-card quiz-card" onclick="startQuiz()">
+                    <div class="option-icon">📝</div>
+                    <h3>Làm Quiz</h3>
+                    <p>Kiểm tra kiến thức từ vựng với các câu hỏi trắc nghiệm và bài tập đa dạng</p>
+                    <div class="option-features">
+                        <div class="feature-item">✅ Câu hỏi trắc nghiệm</div>
+                        <div class="feature-item">✅ Gõ từ tiếng Nhật</div>
+                        <div class="feature-item">✅ Nghe và chọn đáp án</div>
+                        <div class="feature-item">✅ Xếp hạng điểm số</div>
+                    </div>
+                    <div class="option-button quiz-button">
+                        🎯 Làm bài kiểm tra
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Lesson Info -->
+        <div class="lesson-info" id="lessonInfo" style="display: none;">
+            <h2>📋 Thông tin bài học</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">📚</div>
+                    <div class="info-content">
+                        <h4>Từ vựng</h4>
+                        <p id="vocabCount">Đang tải...</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">📖</div>
+                    <div class="info-content">
+                        <h4>Ngữ pháp chính</h4>
+                        <p id="grammarPoint">Đang tải...</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">⏱️</div>
+                    <div class="info-content">
+                        <h4>Thời gian học</h4>
+                        <p id="studyTime">15-20 phút</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">🎯</div>
+                    <div class="info-content">
+                        <h4>Mức độ</h4>
+                        <p id="difficultyText">Cơ bản</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Words -->
+        <div class="preview-words" id="previewWords" style="display: none;">
+            <h2>👀 Xem trước từ vựng</h2>
+            <p>Một số từ vựng chính trong bài học này:</p>
+            
+            <div class="words-grid" id="wordsGrid">
+                <!-- Sample words will be loaded here -->
+            </div>
+            
+            <div class="preview-actions">
+                <button class="btn btn-primary" onclick="startStudy()">📚 Học tất cả từ vựng</button>
+                <button class="btn btn-success" onclick="startQuiz()">📝 Làm Quiz ngay</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        class LessonDetailPage {
+            constructor() {
+                this.lessonId = this.getLessonIdFromUrl();
+                this.lessonData = null;
+                this.init();
+            }
+
+            init() {
+                console.log(`📖 Loading lesson ${this.lessonId}...`);
+                
+                if (!this.lessonId) {
+                    this.showError('Không tìm thấy bài học!');
+                    return;
+                }
+
+                this.loadLessonData();
+            }
+
+            getLessonIdFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return parseInt(urlParams.get('lesson')) || null;
+            }
+
+            loadLessonData() {
+                const userId = this.getCurrentUserId();
+                
+                fetch(`php/n5-lessons-api.php?action=getLessonDetail&lesson_id=${this.lessonId}&user_id=${userId}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            this.lessonData = result.data;
+                            this.renderLessonData();
+                            this.hideLoading();
+                            this.showContent();
+                        } else {
+                            throw new Error(result.error || 'Failed to load lesson data');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Load lesson data error:', error);
+                        this.showError(`Không thể tải dữ liệu bài học: ${error.message}`);
+                    });
+            }
+
+            getCurrentUserId() {
+                // Get user ID from auth - implement based on your auth system
+                return 1; // Temporary - replace with actual user ID from session/auth
+            }
+
+            renderLessonData() {
+                const lesson = this.lessonData;
+
+                // Update header
+                document.getElementById('lessonNumberBig').textContent = lesson.lesson_number;
+                document.getElementById('lessonTitle').textContent = lesson.lesson_title;
+                document.getElementById('lessonTitleJp').textContent = lesson.lesson_title_jp;
+                document.getElementById('lessonDifficulty').textContent = '⭐'.repeat(lesson.difficulty_level);
+                document.getElementById('lessonGroup').textContent = this.getGroupName(lesson.lesson_number);
+                
+                // Update header color
+                document.getElementById('lessonHeader').style.background = 
+                    `linear-gradient(135deg, ${this.getGroupColor(lesson.lesson_number)} 0%, ${this.getGroupColor(lesson.lesson_number)}dd 100%)`;
+
+                // Update lesson info
+                document.getElementById('vocabCount').textContent = `${lesson.total_words} từ vựng`;
+                document.getElementById('grammarPoint').textContent = lesson.grammar_points ? lesson.grammar_points.join(', ') : 'Ngữ pháp N5 cơ bản';
+                document.getElementById('studyTime').textContent = `${lesson.estimated_time || 20} phút`;
+                document.getElementById('difficultyText').textContent = this.getDifficultyText(lesson.difficulty_level);
+
+                // Render sample words
+                if (lesson.sample_words && lesson.sample_words.length > 0) {
+                    this.renderSampleWords(lesson.sample_words);
+                } else {
+                    // Load sample words separately if not included
+                    this.loadSampleWords();
+                }
+            }
+
+            async loadSampleWords() {
+                try {
+                    const userId = this.getCurrentUserId();
+                    const response = await fetch(`php/n5-lessons-api.php?action=getLessonVocabulary&lesson_id=${this.lessonId}&user_id=${userId}`);
+                    const result = await response.json();
+                    
+                    if (result.success && result.data.vocabulary) {
+                        const sampleWords = result.data.vocabulary.slice(0, 6).map(word => ({
+                            jp: word.japanese_word,
+                            meaning: word.vietnamese_meaning,
+                            romaji: word.romaji
+                        }));
+                        this.renderSampleWords(sampleWords);
+                    }
+                } catch (error) {
+                    console.error('❌ Error loading sample words:', error);
+                }
+            }
+
+            getGroupName(lessonNumber) {
+                if (lessonNumber <= 10) return "Nhóm 1: Cơ bản";
+                if (lessonNumber <= 20) return "Nhóm 2: Trung cấp";
+                if (lessonNumber <= 30) return "Nhóm 3: Nâng cao";
+                if (lessonNumber <= 40) return "Nhóm 4: Chuyên sâu";
+                return "Nhóm 5: Tổng hợp";
+            }
+
+            getDifficultyText(level) {
+                switch(level) {
+                    case 1: return "Cơ bản";
+                    case 2: return "Trung cấp";
+                    case 3: return "Nâng cao";
+                    case 4: return "Chuyên sâu";
+                    case 5: return "Tổng hợp";
+                    default: return "Cơ bản";
+                }
+            }
+
+            getGroupColor(lessonNumber) {
+                if (lessonNumber <= 10) return "#56ab2f";
+                if (lessonNumber <= 20) return "#4facfe";
+                if (lessonNumber <= 30) return "#f093fb";
+                if (lessonNumber <= 40) return "#ff9a8b";
+                return "#667eea";
+            }
+
+            renderLessonData() {
+                const lesson = this.lessonData;
+
+                // Update header
+                document.getElementById('lessonNumberBig').textContent = lesson.id;
+                document.getElementById('lessonTitle').textContent = lesson.title;
+                document.getElementById('lessonTitleJp').textContent = lesson.titleJp;
+                document.getElementById('lessonDifficulty').textContent = lesson.difficulty;
+                document.getElementById('lessonGroup').textContent = lesson.group;
+                
+                // Update header color
+                document.getElementById('lessonHeader').style.background = 
+                    `linear-gradient(135deg, ${lesson.color} 0%, ${lesson.color}dd 100%)`;
+
+                // Update lesson info
+                document.getElementById('vocabCount').textContent = lesson.vocabCount;
+                document.getElementById('grammarPoint').textContent = lesson.grammarPoint;
+                document.getElementById('studyTime').textContent = lesson.studyTime;
+                document.getElementById('difficultyText').textContent = lesson.difficultyText;
+
+                // Render sample words
+                this.renderSampleWords(lesson.sampleWords);
+            }
+
+            renderSampleWords(words) {
+                const grid = document.getElementById('wordsGrid');
+                grid.innerHTML = words.map(word => `
+                    <div class="word-preview-card">
+                        <div class="word-jp">${word.jp}</div>
+                        <div class="word-romaji">${word.romaji}</div>
+                        <div class="word-meaning">${word.meaning}</div>
+                    </div>
+                `).join('');
+            }
+
+            showContent() {
+                document.getElementById('lessonOptions').style.display = 'block';
+                document.getElementById('lessonInfo').style.display = 'block';
+                document.getElementById('previewWords').style.display = 'block';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+
+            showError(message) {
+                document.body.innerHTML = `
+                    <div class="container mt-5 text-center">
+                        <h2>❌ Lỗi</h2>
+                        <p>${message}</p>
+                        <a href="vocabulary-lessons.html" class="btn btn-primary">← Về danh sách bài học</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Global functions
+        function startStudy() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-study.html?lesson=${lessonId}`;
+        }
+
+        function startQuiz() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-quiz.html?lesson=${lessonId}`;
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.lessonDetailApp = new LessonDetailPage();
+        });
+    </script>
+</body>
+
+</html>

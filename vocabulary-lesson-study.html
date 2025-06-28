@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Học từ vựng - Flashcard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/lesson-study.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="study-header">
+        <a href="#" onclick="goBack()" class="back-button">← Về bài học</a>
+        <div class="container">
+            <div class="header-content">
+                <div class="lesson-info">
+                    <span class="lesson-number" id="lessonNumber">1</span>
+                    <div class="lesson-details">
+                        <h1 id="lessonTitle">Giới thiệu bản thân</h1>
+                        <p id="lessonTitleJp">第1課：自己紹介</p>
+                    </div>
+                </div>
+                
+                <!-- Progress Info -->
+                <div class="progress-info">
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="currentCard">1</span>
+                            <span class="stat-label">Thẻ hiện tại</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalCards">15</span>
+                            <span class="stat-label">Tổng số thẻ</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="studiedCards">0</span>
+                            <span class="stat-label">Đã học</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        
+        <!-- Loading State -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <h4>Đang tải từ vựng...</h4>
+        </div>
+
+        <!-- Flashcard Container -->
+        <div class="flashcard-container" id="flashcardContainer" style="display: none;">
+            
+            <!-- Instructions -->
+            <div class="instructions" id="instructions">
+                <p>👆 <strong>Nhấn vào thẻ</strong> để xem nghĩa | 🎧 <strong>Nhấn biểu tượng âm thanh</strong> để nghe phát âm</p>
+            </div>
+
+            <!-- Flashcard -->
+            <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="flashcard-inner" id="flashcardInner">
+                    
+                    <!-- Front side (Japanese) -->
+                    <div class="flashcard-face flashcard-front">
+                        <div class="word-japanese" id="wordJapanese">わたし</div>
+                        <div class="word-romaji" id="wordRomaji">watashi</div>
+                        <div class="audio-button" onclick="playAudio(event)" id="audioButton">🔊</div>
+                        <div class="flip-hint">👆 Nhấn để xem nghĩa</div>
+                    </div>
+                    
+                    <!-- Back side (Vietnamese) -->
+                    <div class="flashcard-face flashcard-back">
+                        <div class="word-meaning" id="wordMeaning">tôi</div>
+                        <div class="word-type" id="wordType">đại từ</div>
+                        <div class="word-example" id="wordExample">
+                            <div class="example-jp">わたしは がくせいです。</div>
+                            <div class="example-vn">Tôi là học sinh.</div>
+                        </div>
+                        <div class="flip-hint">👆 Nhấn để xem từ tiếp theo</div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Knowledge Buttons -->
+            <div class="knowledge-buttons" id="knowledgeButtons" style="display: none;">
+                <button class="knowledge-btn dont-know" onclick="markKnowledge(0)">
+                    ❌ Chưa biết
+                </button>
+                <button class="knowledge-btn learning" onclick="markKnowledge(1)">
+                    🤔 Đang học
+                </button>
+                <button class="knowledge-btn know" onclick="markKnowledge(2)">
+                    ✅ Đã biết
+                </button>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons">
+                <button class="nav-btn prev-btn" onclick="previousCard()" id="prevBtn">
+                    ← Trước
+                </button>
+                <button class="nav-btn next-btn" onclick="nextCard()" id="nextBtn">
+                    Tiếp →
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Completion Screen -->
+        <div class="completion-screen" id="completionScreen" style="display: none;">
+            <div class="completion-content">
+                <div class="completion-icon">🎉</div>
+                <h2>Chúc mừng!</h2>
+                <p>Bạn đã hoàn thành việc học từ vựng bài này</p>
+                
+                <div class="completion-stats">
+                    <div class="completion-stat">
+                        <span class="stat-number" id="totalStudied">15</span>
+                        <span class="stat-text">từ đã học</span>
+                    </div>
+                    <div class="completion-stat">
+                        <span class="stat-number" id="timeSpent">12</span>
+                        <span class="stat-text">phút học tập</span>
+                    </div>
+                </div>
+
+                <div class="completion-actions">
+                    <button class="btn btn-primary" onclick="startQuiz()">📝 Làm Quiz</button>
+                    <button class="btn btn-success" onclick="reviewAgain()">🔄 Học lại</button>
+                    <button class="btn btn-secondary" onclick="goToLessonList()">📚 Bài khác</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Audio element for pronunciation -->
+    <audio id="audioPlayer" style="display: none;"></audio>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        class LessonStudyPage {
+            constructor() {
+                this.lessonId = this.getLessonIdFromUrl();
+                this.currentWordIndex = 0;
+                this.isFlipped = false;
+                this.studiedWords = [];
+                this.startTime = Date.now();
+                this.vocabularyData = [];
+                this.init();
+            }
+
+            init() {
+                console.log(`📚 Starting study for lesson ${this.lessonId}...`);
+                
+                if (!this.lessonId) {
+                    this.showError('Không tìm thấy bài học!');
+                    return;
+                }
+
+                this.loadVocabularyData();
+                this.setupKeyboardListeners();
+            }
+
+            getLessonIdFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return parseInt(urlParams.get('lesson')) || null;
+            }
+
+            loadVocabularyData() {
+                // Call API to get lesson vocabulary
+                const userId = this.getCurrentUserId();
+                
+                fetch(`php/n5-lessons-api.php?action=getLessonVocabulary&lesson_id=${this.lessonId}&user_id=${userId}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            this.vocabularyData = result.data.vocabulary.map(word => ({
+                                japanese: word.japanese_word,
+                                romaji: word.romaji,
+                                meaning: word.vietnamese_meaning,
+                                type: word.word_type,
+                                example_jp: word.example_sentence_jp || `${word.japanese_word}を べんきょうします。`,
+                                example_vn: word.example_sentence_vn || `Học ${word.vietnamese_meaning}.`,
+                                id: word.id,
+                                knowledge_level: word.knowledge_level || 0
+                            }));
+                            
+                            this.lessonData = result.data.lesson;
+                            this.updateLessonInfo();
+                            this.showFirstCard();
+                            this.hideLoading();
+                        } else {
+                            throw new Error(result.error || 'Failed to load vocabulary');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Load vocabulary error:', error);
+                        this.showError(`Không thể tải từ vựng: ${error.message}`);
+                    });
+            }
+
+            getCurrentUserId() {
+                // Get user ID from auth - implement based on your auth system
+                return 1; // Temporary - replace with actual user ID from session/auth
+            }
+
+            updateLessonInfo() {
+                // Update lesson info in header using real lesson data
+                document.getElementById('lessonNumber').textContent = this.lessonData.lesson_number;
+                document.getElementById('totalCards').textContent = this.vocabularyData.length;
+                
+                document.getElementById('lessonTitle').textContent = this.lessonData.lesson_title;
+                document.getElementById('lessonTitleJp').textContent = this.lessonData.lesson_title_jp;
+            }
+
+            markKnowledge(level) {
+                // Mark word as studied with knowledge level
+                const wordId = this.currentWordIndex;
+                const word = this.vocabularyData[wordId];
+                
+                this.studiedWords[wordId] = level;
+                
+                // Update word knowledge in API
+                this.updateWordKnowledgeAPI(word.id, level);
+                
+                // Auto advance to next card
+                setTimeout(() => {
+                    this.nextCard();
+                }, 300);
+            }
+
+            async updateWordKnowledgeAPI(wordId, knowledgeLevel) {
+                try {
+                    const userId = this.getCurrentUserId();
+                    
+                    const response = await fetch('php/n5-lessons-api.php?action=updateWordKnowledge', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            word_id: wordId,
+                            knowledge_level: knowledgeLevel
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        console.error('❌ Failed to update word knowledge:', result.error);
+                    }
+                } catch (error) {
+                    console.error('❌ Error updating word knowledge:', error);
+                }
+            }
+
+            showCompletionScreen() {
+                const timeSpent = Math.round((Date.now() - this.startTime) / 60000); // minutes
+                const studiedCount = Object.keys(this.studiedWords).length;
+                
+                // Submit study progress to API
+                this.updateStudyProgressAPI(studiedCount, timeSpent);
+                
+                document.getElementById('flashcardContainer').style.display = 'none';
+                document.getElementById('completionScreen').style.display = 'block';
+                
+                document.getElementById('totalStudied').textContent = this.vocabularyData.length;
+                document.getElementById('timeSpent').textContent = timeSpent;
+            }
+
+            async updateStudyProgressAPI(studiedWords, timeSpent) {
+                try {
+                    const userId = this.getCurrentUserId();
+                    
+                    const response = await fetch('php/n5-lessons-api.php?action=updateStudyProgress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            lesson_id: this.lessonId,
+                            studied_words: studiedWords,
+                            time_spent: timeSpent * 60 // Convert to seconds
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        console.log('✅ Study progress updated successfully');
+                    } else {
+                        console.error('❌ Failed to update study progress:', result.error);
+                    }
+                } catch (error) {
+                    console.error('❌ Error updating study progress:', error);
+                }
+            }
+
+            showFirstCard() {
+                document.getElementById('flashcardContainer').style.display = 'block';
+                this.updateCard();
+                this.updateProgress();
+            }
+
+            updateCard() {
+                const word = this.vocabularyData[this.currentWordIndex];
+                
+                // Update front side
+                document.getElementById('wordJapanese').textContent = word.japanese;
+                document.getElementById('wordRomaji').textContent = word.romaji;
+                
+                // Update back side  
+                document.getElementById('wordMeaning').textContent = word.meaning;
+                document.getElementById('wordType').textContent = word.type;
+                
+                // Update example
+                const exampleContainer = document.getElementById('wordExample');
+                exampleContainer.innerHTML = `
+                    <div class="example-jp">${word.example_jp}</div>
+                    <div class="example-vn">${word.example_vn}</div>
+                `;
+
+                // Reset flip state
+                this.isFlipped = false;
+                document.getElementById('flashcardInner').classList.remove('flipped');
+                document.getElementById('knowledgeButtons').style.display = 'none';
+
+                // Update navigation buttons
+                document.getElementById('prevBtn').disabled = this.currentWordIndex === 0;
+                document.getElementById('nextBtn').disabled = this.currentWordIndex === this.vocabularyData.length - 1;
+            }
+
+            flipCard() {
+                const flashcardInner = document.getElementById('flashcardInner');
+                const knowledgeButtons = document.getElementById('knowledgeButtons');
+                
+                if (!this.isFlipped) {
+                    flashcardInner.classList.add('flipped');
+                    knowledgeButtons.style.display = 'flex';
+                    this.isFlipped = true;
+                } else {
+                    this.nextCard();
+                }
+            }
+
+            markKnowledge(level) {
+                // Mark word as studied with knowledge level
+                const wordId = this.currentWordIndex;
+                this.studiedWords[wordId] = level;
+                
+                // Auto advance to next card
+                setTimeout(() => {
+                    this.nextCard();
+                }, 300);
+            }
+
+            nextCard() {
+                if (this.currentWordIndex < this.vocabularyData.length - 1) {
+                    this.currentWordIndex++;
+                    this.updateCard();
+                    this.updateProgress();
+                } else {
+                    this.showCompletionScreen();
+                }
+            }
+
+            previousCard() {
+                if (this.currentWordIndex > 0) {
+                    this.currentWordIndex--;
+                    this.updateCard();
+                    this.updateProgress();
+                }
+            }
+
+            updateProgress() {
+                const current = this.currentWordIndex + 1;
+                const total = this.vocabularyData.length;
+                const studied = Object.keys(this.studiedWords).length;
+                const percentage = Math.round((studied / total) * 100);
+                
+                document.getElementById('currentCard').textContent = current;
+                document.getElementById('studiedCards').textContent = studied;
+                document.getElementById('progressFill').style.width = `${percentage}%`;
+                document.getElementById('progressText').textContent = `${percentage}%`;
+            }
+
+            showCompletionScreen() {
+                const timeSpent = Math.round((Date.now() - this.startTime) / 60000); // minutes
+                
+                document.getElementById('flashcardContainer').style.display = 'none';
+                document.getElementById('completionScreen').style.display = 'block';
+                
+                document.getElementById('totalStudied').textContent = this.vocabularyData.length;
+                document.getElementById('timeSpent').textContent = timeSpent;
+            }
+
+            playAudio(event) {
+                event.stopPropagation(); // Prevent card flip
+                
+                // Mock audio play - in real implementation, use actual audio files or TTS
+                const word = this.vocabularyData[this.currentWordIndex];
+                
+                // Visual feedback
+                const audioBtn = document.getElementById('audioButton');
+                audioBtn.textContent = '🔊';
+                audioBtn.style.transform = 'scale(1.2)';
+                
+                setTimeout(() => {
+                    audioBtn.textContent = '🔊';
+                    audioBtn.style.transform = 'scale(1)';
+                }, 500);
+
+                console.log(`🔊 Playing audio for: ${word.japanese}`);
+                // TODO: Implement actual audio playback
+            }
+
+            setupKeyboardListeners() {
+                document.addEventListener('keydown', (e) => {
+                    switch(e.key) {
+                        case ' ':
+                        case 'Enter':
+                            e.preventDefault();
+                            this.flipCard();
+                            break;
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.previousCard();
+                            break;
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            this.nextCard();
+                            break;
+                        case '1':
+                            if (this.isFlipped) this.markKnowledge(0);
+                            break;
+                        case '2':
+                            if (this.isFlipped) this.markKnowledge(1);
+                            break;
+                        case '3':
+                            if (this.isFlipped) this.markKnowledge(2);
+                            break;
+                    }
+                });
+            }
+
+            hideLoading() {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+
+            showError(message) {
+                document.body.innerHTML = `
+                    <div class="container mt-5 text-center">
+                        <h2>❌ Lỗi</h2>
+                        <p>${message}</p>
+                        <a href="vocabulary-lessons.html" class="btn btn-primary">← Về danh sách bài học</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Global functions
+        function flipCard() {
+            window.studyApp.flipCard();
+        }
+
+        function markKnowledge(level) {
+            window.studyApp.markKnowledge(level);
+        }
+
+        function nextCard() {
+            window.studyApp.nextCard();
+        }
+
+        function previousCard() {
+            window.studyApp.previousCard();
+        }
+
+        function playAudio(event) {
+            window.studyApp.playAudio(event);
+        }
+
+        function goBack() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-detail.html?lesson=${lessonId}`;
+        }
+
+        function startQuiz() {
+            const lessonId = new URLSearchParams(window.location.search).get('lesson');
+            window.location.href = `vocabulary-lesson-quiz.html?lesson=${lessonId}`;
+        }
+
+        function reviewAgain() {
+            window.location.reload();
+        }
+
+        function goToLessonList() {
+            window.location.href = 'vocabulary-lessons.html';
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.studyApp = new LessonStudyPage();
+        });
+    </script>
+</body>
+
+</html>

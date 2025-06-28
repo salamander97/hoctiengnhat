@@ -578,6 +578,17 @@
                 <p>Xem tiến độ học tập và phân tích kết quả</p>
                 <span class="badge" id="statsBadge">Chi tiết</span>
             </a>
+            <a href="vocabulary-lessons.html" class="action-card featured">
+                <span class="action-icon">📖</span>
+                <div class="new-badge">MỚI</div>
+                <h3>Học theo bài Minna</h3>
+                <p>50 bài học từ vựng theo giáo trình Minna no Nihongo với tiến độ có hệ thống</p>
+                <div class="lesson-stats">
+                    <span class="lesson-stat">
+                        <strong id="minnaLessonsCompleted">0</strong>/50 bài
+                    </span>
+                </div>
+            </a>
         </div>
 
         <!-- Categories Preview -->
@@ -705,45 +716,45 @@
             }
 
             updateUI() {
-    if (!this.vocabularyData) return;
-    
-    const { progress, categories, stats } = this.vocabularyData;
-    
-    // Update header stats
-    this.animateNumber('totalLearned', stats.overall?.vocabulary_words_learned || 0);
-    this.animateNumber('totalMastered', stats.overall?.vocabulary_words_mastered || 0);
-    this.animateNumber('categoriesUnlocked', stats.overall?.vocabulary_categories_unlocked || 0);
-    
-    // ✅ SIMPLE FIX: Display time based on duration
-    const studyTimeMs = stats.overall?.vocabulary_study_time || 0;
-    console.log('📊 Raw study time (milliseconds):', studyTimeMs);
-    
-    const totalMinutes = Math.floor(studyTimeMs / 1000 / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    
-    console.log('⏰ Time breakdown:', { totalMinutes, hours, minutes });
-    
-    // Display logic
-    if (hours >= 1) {
-        // >= 1 hour: show as "2h 15m" or "1h"
-        if (minutes > 0) {
-            document.getElementById('studyTime').textContent = `${hours}h ${minutes}m`;
-        } else {
-            this.animateNumber('studyTime', hours, 'h');
-        }
-    } else {
-        // < 1 hour: show as minutes
-        const displayMinutes = Math.max(1, totalMinutes); // At least 1 minute
-        this.animateNumber('studyTime', displayMinutes, 'phút');
-    }
-    
-    // Update badges
-    this.updateBadges(stats);
-    
-    // Update categories preview
-    this.updateCategoriesPreview(categories);
-}
+                if (!this.vocabularyData) return;
+
+                const { progress, categories, stats } = this.vocabularyData;
+
+                // Update header stats
+                this.animateNumber('totalLearned', stats.overall?.vocabulary_words_learned || 0);
+                this.animateNumber('totalMastered', stats.overall?.vocabulary_words_mastered || 0);
+                this.animateNumber('categoriesUnlocked', stats.overall?.vocabulary_categories_unlocked || 0);
+
+                // ✅ SIMPLE FIX: Display time based on duration
+                const studyTimeMs = stats.overall?.vocabulary_study_time || 0;
+                console.log('📊 Raw study time (milliseconds):', studyTimeMs);
+
+                const totalMinutes = Math.floor(studyTimeMs / 1000 / 60);
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+
+                console.log('⏰ Time breakdown:', { totalMinutes, hours, minutes });
+
+                // Display logic
+                if (hours >= 1) {
+                    // >= 1 hour: show as "2h 15m" or "1h"
+                    if (minutes > 0) {
+                        document.getElementById('studyTime').textContent = `${hours}h ${minutes}m`;
+                    } else {
+                        this.animateNumber('studyTime', hours, 'h');
+                    }
+                } else {
+                    // < 1 hour: show as minutes
+                    const displayMinutes = Math.max(1, totalMinutes); // At least 1 minute
+                    this.animateNumber('studyTime', displayMinutes, 'phút');
+                }
+
+                // Update badges
+                this.updateBadges(stats);
+
+                // Update categories preview
+                this.updateCategoriesPreview(categories);
+            }
             /**
              * Helper function to format any time value correctly
              */
