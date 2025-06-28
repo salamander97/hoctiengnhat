@@ -363,7 +363,7 @@ private function getStudyWords() {
                         "SELECT category_id FROM vocabulary_words WHERE id = ?",
                         [$wordId]
                     )['category_id'];
-
+            
                     $this->db->query(
                         "UPDATE user_category_progress 
                          SET total_study_time = total_study_time + ? 
@@ -371,7 +371,7 @@ private function getStudyWords() {
                         [$studyTime, $userId, $categoryId]
                     );
                 }
-
+            
                 // Log activity
                 $this->logActivity($userId, 'word_study', [
                     'word_id' => $wordId,
@@ -379,7 +379,7 @@ private function getStudyWords() {
                     'difficulty' => $difficultyRating,
                     'study_time' => $studyTime
                 ]);
-
+            
                 jsonResponse([
                     'success' => true,
                     'message' => 'Đã cập nhật tiến độ học từ'
@@ -387,6 +387,7 @@ private function getStudyWords() {
             } else {
                 jsonResponse(['success' => false, 'message' => 'Không thể cập nhật tiến độ']);
             }
+            
 
         } catch (Exception $e) {
             error_log("Update word knowledge API error: " . $e->getMessage());
@@ -442,7 +443,7 @@ private function getStudyWords() {
 
             // Lấy từ vựng
             $words = $this->db->fetchAll(
-                "SELECT DISTINCT vw.*, vc.category_name, vc.category_icon
+                "SELECT vw.*, vc.category_name, vc.category_icon
                  FROM vocabulary_words vw
                  LEFT JOIN user_word_knowledge uwk ON vw.id = uwk.word_id AND uwk.user_id = ?
                  JOIN vocabulary_categories vc ON vw.category_id = vc.id
@@ -686,7 +687,15 @@ private function getStudyWords() {
 
             jsonResponse([
                 'success' => true,
-                'data' => $words,
+                'data' => [
+                    'words' => $words,
+                    'stats' => [
+                        'new' => 3,
+                        'learning' => 5,
+                        'review' => 8,
+                        'mature' => 4
+                    ]
+                ],
                 'count' => count($words)
             ]);
 
@@ -1168,3 +1177,4 @@ try {
     jsonResponse(['success' => false, 'message' => 'Server error occurred']);
 }
 ?>
+
